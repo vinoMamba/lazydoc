@@ -1,0 +1,23 @@
+env: local
+http:
+  port: 3200
+pg:
+  dsn: postgres://postgres:123456@127.0.0.1:5432/lazydoc?sslmode=disable
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+jwt:
+  key: "lazydoc"
+  exp: 72
+log:
+  log_file_name: "./storage/logs/server.log"
+asset:
+  icon_file_path: "./storage/icons/"
+mail:
+  host: "0.0.0.0"
+  port: 1025
+  user: ""
+  passwd: ""
+front:
+  link: "http://localhost:3000/"
