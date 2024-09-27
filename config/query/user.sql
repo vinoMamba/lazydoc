@@ -2,6 +2,6 @@
 SELECT * FROM users 
 WHERE id = $1 LIMIT 1;
 
--- name: GetUserByUsername :one
+-- name: GetUserByEmail :one
 SELECT * FROM users 
-WHERE username = $1 LIMIT 1;
+WHERE email = $1 LIMIT 1;

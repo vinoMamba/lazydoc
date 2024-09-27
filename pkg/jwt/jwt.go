@@ -28,11 +28,10 @@ func NewJWT(config *viper.Viper) *JWT {
 	}
 }
 
-func (j *JWT) GenJWT(userId, email, activeSpaceId string) (string, error) {
+func (j *JWT) GenJWT(userId, email string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, CustomClaims{
-		Email:         email,
-		UserId:        userId,
-		ActiveSpaceId: activeSpaceId,
+		Email:  email,
+		UserId: userId,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(j.exp))),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

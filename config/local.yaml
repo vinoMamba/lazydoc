@@ -2,7 +2,7 @@ env: local
 http:
   port: 3200
 pg:
-  dsn: postgres://postgres:123456@127.0.0.1:5432/lazydoc?sslmode=disable
+  dsn: postgres://postgres:123456@127.0.0.1:5432/lazy_doc?sslmode=disable
 redis:
   addr: "localhost:6379"
   password: ""

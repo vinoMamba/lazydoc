@@ -9,13 +9,13 @@ import (
 	"context"
 )
 
-const getUserById = `-- name: GetUserById :one
+const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at FROM users 
-WHERE id = $1 LIMIT 1
+WHERE email = $1 LIMIT 1
 `
 
-func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserById, id)
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByEmail, email)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -32,13 +32,13 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 	return i, err
 }
 
-const getUserByUsername = `-- name: GetUserByUsername :one
+const getUserById = `-- name: GetUserById :one
 SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at FROM users 
-WHERE username = $1 LIMIT 1
+WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByUsername, username)
+func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
+	row := q.db.QueryRow(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v3"
+	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/internal/service"
 )
 
@@ -20,5 +21,19 @@ func NewUserHandler(userService service.UserService) UserHandler {
 }
 
 func (u *userHandler) LoginPwd(c fiber.Ctx) error {
-	return c.Status(fiber.StatusOK).JSON(nil)
+	params := new(req.LoginPwdReq)
+	if err := c.Bind().JSON(params); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	result, err := u.userService.LoginPwd(c, params)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
 }
