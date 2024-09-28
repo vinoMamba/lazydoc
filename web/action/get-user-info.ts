@@ -1,6 +1,6 @@
 "use server"
 
-import { UserInfoSchema } from "@/schemas/uset"
+import { UserInfoSchema } from "@/schemas/user"
 import { cookies } from "next/headers"
 
 

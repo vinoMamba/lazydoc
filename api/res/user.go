@@ -9,4 +9,5 @@ type UserInfoRes struct {
 	Email    string `json:"email"`
 	Avatar   string `json:"avatar"`
 	UserId   string `json:"userId"`
+	IsSuper  bool   `json:"isSuper"`
 }

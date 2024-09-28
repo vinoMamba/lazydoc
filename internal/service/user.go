@@ -61,5 +61,6 @@ func (s *userService) GetUserInfoService(ctx fiber.Ctx, userId string) (*res.Use
 		UserId:   u.ID,
 		Avatar:   u.Avatar.String,
 		Email:    u.Email,
+		IsSuper:  u.IsSuper.Bool,
 	}, nil
 }
