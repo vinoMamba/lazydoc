@@ -1,13 +1,14 @@
 "use client"
 
 import { Home, LineChart, PanelLeftClose, Settings, Users2 } from "lucide-react"
-import { Sheet, SheetContent } from "./ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "./ui/sheet"
 import { Button } from "./ui/button"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { LogoutButton } from "./logout-button"
+import { Separator } from "./ui/separator"
 
 const navList = [
   { link: '/workbench', title: 'Workbench', icon: <Home className="h-5 w-5 transition-all group-hover:scale-110" /> },
@@ -26,8 +27,12 @@ export const SheetNavList = () => {
         <span className="sr-only">Toggle Menu</span>
       </Button>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="sm:max-w-xs h-screen flex flex-col">
-          <nav className="grid gap-6 text-lg font-medium">
+        <SheetContent side="left" className="sm:max-w-xs h-full flex flex-col">
+          <SheetHeader className="text-left pl-4">
+            <SheetTitle>Menu</SheetTitle>
+            <SheetDescription></SheetDescription>
+          </SheetHeader>
+          <nav className="grid gap-6 text-lg font-medium ">
             {
               navList.map(item => (
                 <Link
@@ -45,7 +50,8 @@ export const SheetNavList = () => {
               ))
             }
           </nav>
-          <nav className="text-lg font-medium mt-auto mb-4 flex items-center justify-between">
+          <Separator />
+          <nav className="text-lg mt-auto font-medium mb-4 flex items-center justify-between">
             <Link
               onClick={() => setOpen(false)}
               href="/settings"

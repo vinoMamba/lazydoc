@@ -23,7 +23,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
           <Logo />
           <UserAvatar />
         </header>
-        <div className="w-full h-full mt-14 sm:mt-0 pl-0 sm:pl-14 bg-blue-300">
+        <div className="w-full h-full mt-14 sm:mt-0 pl-0 sm:pl-14">
           {children}
         </div>
       </TooltipProvider>
