@@ -12,6 +12,7 @@ import (
 
 type UserService interface {
 	LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginRes, error)
+	GetUserInfoService(ctx fiber.Ctx, userId string) (*res.UserInfoRes, error)
 }
 
 type userService struct {
@@ -47,5 +48,18 @@ func (s *userService) LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginR
 
 	return &res.LoginRes{
 		Token: token,
+	}, nil
+}
+
+func (s *userService) GetUserInfoService(ctx fiber.Ctx, userId string) (*res.UserInfoRes, error) {
+	u, err := s.queries.GetUserById(ctx.Context(), userId)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+	return &res.UserInfoRes{
+		Username: u.Username,
+		UserId:   u.ID,
+		Avatar:   u.Avatar.String,
+		Email:    u.Email,
 	}, nil
 }

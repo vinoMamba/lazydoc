@@ -5,9 +5,8 @@ type LoginRes struct {
 }
 
 type UserInfoRes struct {
-	Username      string `json:"username"`
-	Email         string `json:"email"`
-	Avatar        string `json:"avatar"`
-	UserId        string `json:"userId"`
-	ActiveSpaceID string `json:"activeSpaceId"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Avatar   string `json:"avatar"`
+	UserId   string `json:"userId"`
 }

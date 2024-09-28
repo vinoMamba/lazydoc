@@ -8,6 +8,7 @@ import (
 
 type UserHandler interface {
 	LoginPwd(c fiber.Ctx) error
+	GetUserInfo(c fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -36,4 +37,16 @@ func (u *userHandler) LoginPwd(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(result)
+}
+
+func (u *userHandler) GetUserInfo(c fiber.Ctx) error {
+	userId := GetUserIdFromLocals(c)
+	userInfo, err := u.userService.GetUserInfoService(c, userId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(userInfo)
 }

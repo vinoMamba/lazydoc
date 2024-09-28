@@ -33,6 +33,11 @@ func NewHttpServer(
 	})
 
 	app.Post("/login/password", userHandler.LoginPwd)
+
+	user := app.Group("/user")
+	user.Use(middleware.JWTMiddleware(jwt))
+	user.Get("/info", userHandler.GetUserInfo)
+
 	app.Use(middleware.NotFound())
 	return app
 }
