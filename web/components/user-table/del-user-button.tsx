@@ -11,7 +11,7 @@ type Props = {
   userId: string
 }
 
-export const DelUserButton = ({ userId }: Props) => {
+export const StopUserButton = ({ userId }: Props) => {
   const [open, setOpen] = useState(false)
   const handleDelete = async () => {
     const { code, message } = await delUserAction(userId)

@@ -1,6 +1,6 @@
 "use server"
 
-import { UserListSchema } from "@/schemas/user"
+import { UserInfoSchema } from "@/schemas/user"
 import { cookies } from "next/headers"
 
 
@@ -18,15 +18,14 @@ export const getUserInfoAction = async () => {
       }
     })
     const json = await result.json();
-    return json
-    const userList = UserListSchema.safeParse(json)
+    const userList = UserInfoSchema.safeParse(json)
     if (userList.success) {
       return userList.data
     } else {
-      return []
+      return null
     }
   } catch (error) {
     console.error(error)
-    return []
+    return null
   }
 }

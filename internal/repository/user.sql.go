@@ -12,25 +12,17 @@ import (
 )
 
 const deleteUserById = `-- name: DeleteUserById :exec
-UPDATE users
-SET is_deleted = true,  deleted_by = $1 ,deleted_at = $2
-WHERE id = $3
+DELETE FROM users WHERE id = $1
 `
 
-type DeleteUserByIdParams struct {
-	DeletedBy pgtype.Text
-	DeletedAt pgtype.Timestamp
-	ID        string
-}
-
-func (q *Queries) DeleteUserById(ctx context.Context, arg DeleteUserByIdParams) error {
-	_, err := q.db.Exec(ctx, deleteUserById, arg.DeletedBy, arg.DeletedAt, arg.ID)
+func (q *Queries) DeleteUserById(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, deleteUserById, id)
 	return err
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by FROM users 
-WHERE email = $1 LIMIT 1
+WHERE email = $1  LIMIT 1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
@@ -83,7 +75,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 const getUserList = `-- name: GetUserList :many
 SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by 
 FROM users 
-WHERE (username LIKE $1 OR email LIKE $2) AND is_deleted = false AND is_super = false
+WHERE (username LIKE $1 OR email LIKE $2) AND is_super = false
 ORDER BY created_at DESC
 LIMIT $3 OFFSET $4
 `

@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { z } from "zod"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { getFirstStr } from "@/lib/string"
-import { DelUserButton } from "./del-user-button"
+import { StopUserButton } from "./del-user-button"
 
 export type UserItem = z.infer<typeof UserInfoSchema>
 
@@ -43,7 +43,7 @@ export const columns: ColumnDef<UserItem>[] = [
     header: "Action",
     cell: ({ row }) => {
       return (
-        <DelUserButton userId={row.original.userId} />
+        <StopUserButton userId={row.original.userId} />
       )
     }
   },

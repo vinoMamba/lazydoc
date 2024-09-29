@@ -5,11 +5,12 @@ type LoginRes struct {
 }
 
 type UserInfoRes struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Avatar   string `json:"avatar"`
-	UserId   string `json:"userId"`
-	IsSuper  bool   `json:"isSuper"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Avatar    string `json:"avatar"`
+	UserId    string `json:"userId"`
+	IsSuper   bool   `json:"isSuper"`
+	IsDeleted bool   `json:"isDeleted"`
 }
 
 type UserListRes struct {

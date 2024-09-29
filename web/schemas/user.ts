@@ -5,7 +5,8 @@ export const UserInfoSchema = z.object({
   username: z.string(),
   email: z.string().email(),
   avatar: z.string().optional(),
-  isSuper: z.boolean()
+  isSuper: z.boolean(),
+  isDeleted: z.boolean()
 })
 
 export const UserListSchema = z.object({

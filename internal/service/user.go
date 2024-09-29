@@ -18,7 +18,7 @@ type UserService interface {
 	GetUserInfoService(ctx fiber.Ctx, userId string) (*res.UserInfoRes, error)
 	AddUserService(ctx fiber.Ctx, uid string, req *req.AddUserReq) error
 	GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, condition string) (*res.UserListRes, error)
-	DeleteUserService(ctx fiber.Ctx, uid, userId string) error
+	DeleteUserService(ctx fiber.Ctx, userId string) error
 }
 
 type userService struct {
@@ -33,7 +33,7 @@ func NewUserService(service *Service) UserService {
 
 func (s *userService) LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginRes, error) {
 	u, err := s.queries.GetUserByEmail(ctx.Context(), req.Email)
-	if err != nil {
+	if err != nil || u.IsDeleted.Bool == true {
 		return nil, errors.New("current email is not registered yet")
 	}
 
@@ -63,11 +63,12 @@ func (s *userService) GetUserInfoService(ctx fiber.Ctx, userId string) (*res.Use
 		return nil, errors.New("user not found")
 	}
 	return &res.UserInfoRes{
-		Username: u.Username,
-		UserId:   u.ID,
-		Avatar:   u.Avatar.String,
-		Email:    u.Email,
-		IsSuper:  u.IsSuper.Bool,
+		Username:  u.Username,
+		UserId:    u.ID,
+		Avatar:    u.Avatar.String,
+		Email:     u.Email,
+		IsSuper:   u.IsSuper.Bool,
+		IsDeleted: u.IsDeleted.Bool,
 	}, nil
 }
 
@@ -126,11 +127,12 @@ func (s *userService) GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, c
 
 	for _, item := range list {
 		i := &res.UserInfoRes{
-			UserId:   item.ID,
-			Avatar:   item.Avatar.String,
-			Username: item.Username,
-			Email:    item.Email,
-			IsSuper:  item.IsDeleted.Bool,
+			UserId:    item.ID,
+			Avatar:    item.Avatar.String,
+			Username:  item.Username,
+			Email:     item.Email,
+			IsSuper:   item.IsDeleted.Bool,
+			IsDeleted: item.IsDeleted.Bool,
 		}
 		items = append(items, i)
 	}
@@ -155,13 +157,9 @@ func (s *userService) GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, c
 	return result, nil
 }
 
-func (s *userService) DeleteUserService(ctx fiber.Ctx, uid, userId string) error {
+func (s *userService) DeleteUserService(ctx fiber.Ctx, userId string) error {
 
-	if err := s.queries.DeleteUserById(ctx.Context(), repository.DeleteUserByIdParams{
-		DeletedBy: pgtype.Text{String: uid, Valid: true},
-		DeletedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
-		ID:        userId,
-	}); err != nil {
+	if err := s.queries.DeleteUserById(ctx.Context(), userId); err != nil {
 		log.Errorf("[database] delete user error: %v", err)
 		return errors.New("internal server error")
 	}
