@@ -4,7 +4,7 @@ WHERE id = $1 LIMIT 1;
 
 -- name: GetUserByEmail :one
 SELECT * FROM users 
-WHERE email = $1 LIMIT 1;
+WHERE email = $1  LIMIT 1;
 
 -- name: InsertUser :exec
 INSERT INTO users (
@@ -16,9 +16,14 @@ INSERT INTO users (
 -- name: GetUserList :many
 SELECT * 
 FROM users 
-WHERE username LIKE $1 OR email LIKE $2 AND is_deleted = false AND is_super = false
+WHERE (username LIKE $1 OR email LIKE $2) AND is_deleted = false AND is_super = false
 ORDER BY created_at DESC
 LIMIT $3 OFFSET $4;
 
 -- name: GetUserListCount :one
 SELECT COUNT(*) FROM users WHERE username LIKE $1 OR email LIKE $2 AND is_deleted = false AND is_super = false;
+
+-- name: DeleteUserById :exec
+UPDATE users
+SET is_deleted = true,  deleted_by = $1 ,deleted_at = $2
+WHERE id = $3;

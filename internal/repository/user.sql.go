@@ -11,8 +11,25 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const deleteUserById = `-- name: DeleteUserById :exec
+UPDATE users
+SET is_deleted = true,  deleted_by = $1 ,deleted_at = $2
+WHERE id = $3
+`
+
+type DeleteUserByIdParams struct {
+	DeletedBy pgtype.Text
+	DeletedAt pgtype.Timestamp
+	ID        string
+}
+
+func (q *Queries) DeleteUserById(ctx context.Context, arg DeleteUserByIdParams) error {
+	_, err := q.db.Exec(ctx, deleteUserById, arg.DeletedBy, arg.DeletedAt, arg.ID)
+	return err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by FROM users 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by FROM users 
 WHERE email = $1 LIMIT 1
 `
 
@@ -31,12 +48,14 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.CreatedBy,
+		&i.UpdatedBy,
+		&i.DeletedBy,
 	)
 	return i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by FROM users 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by FROM users 
 WHERE id = $1 LIMIT 1
 `
 
@@ -55,14 +74,16 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.CreatedBy,
+		&i.UpdatedBy,
+		&i.DeletedBy,
 	)
 	return i, err
 }
 
 const getUserList = `-- name: GetUserList :many
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by 
 FROM users 
-WHERE username LIKE $1 OR email LIKE $2 AND is_deleted = false AND is_super = false
+WHERE (username LIKE $1 OR email LIKE $2) AND is_deleted = false AND is_super = false
 ORDER BY created_at DESC
 LIMIT $3 OFFSET $4
 `
@@ -100,6 +121,8 @@ func (q *Queries) GetUserList(ctx context.Context, arg GetUserListParams) ([]Use
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.CreatedBy,
+			&i.UpdatedBy,
+			&i.DeletedBy,
 		); err != nil {
 			return nil, err
 		}

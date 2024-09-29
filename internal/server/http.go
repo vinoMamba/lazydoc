@@ -37,6 +37,7 @@ func NewHttpServer(
 	user := app.Group("/user")
 	user.Use(middleware.JWTMiddleware(jwt))
 	user.Post("", userHandler.AddUser)
+	user.Delete("", userHandler.DeleteUser)
 	user.Get("/info", userHandler.GetUserInfo)
 	user.Get("/list", userHandler.GetUserList)
 

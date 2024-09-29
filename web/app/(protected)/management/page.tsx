@@ -1,5 +1,5 @@
 import { SearchParams } from "@/action/get-user-list"
-import { AddUserButton } from "@/components/add-user-button"
+import { AddUserButton } from "@/components/user-table/add-user-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { UserTable } from "@/components/user-table"
 import { SearchInput } from "@/components/user-table/search-input"

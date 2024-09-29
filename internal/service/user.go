@@ -18,6 +18,7 @@ type UserService interface {
 	GetUserInfoService(ctx fiber.Ctx, userId string) (*res.UserInfoRes, error)
 	AddUserService(ctx fiber.Ctx, uid string, req *req.AddUserReq) error
 	GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, condition string) (*res.UserListRes, error)
+	DeleteUserService(ctx fiber.Ctx, uid, userId string) error
 }
 
 type userService struct {
@@ -152,4 +153,18 @@ func (s *userService) GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, c
 	}
 
 	return result, nil
+}
+
+func (s *userService) DeleteUserService(ctx fiber.Ctx, uid, userId string) error {
+
+	if err := s.queries.DeleteUserById(ctx.Context(), repository.DeleteUserByIdParams{
+		DeletedBy: pgtype.Text{String: uid, Valid: true},
+		DeletedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+		ID:        userId,
+	}); err != nil {
+		log.Errorf("[database] delete user error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
 }

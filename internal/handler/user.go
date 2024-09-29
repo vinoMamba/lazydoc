@@ -13,6 +13,7 @@ type UserHandler interface {
 	GetUserInfo(c fiber.Ctx) error
 	GetUserList(c fiber.Ctx) error
 	AddUser(c fiber.Ctx) error
+	DeleteUser(c fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -96,6 +97,20 @@ func (u *userHandler) AddUser(c fiber.Ctx) error {
 		})
 	}
 	if err := u.userService.AddUserService(c, uid, params); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
+func (u *userHandler) DeleteUser(c fiber.Ctx) error {
+	uid := GetUserIdFromLocals(c)
+	userId := c.Query("userId")
+
+	if err := u.userService.DeleteUserService(c, uid, userId); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),
 		})

@@ -20,4 +20,6 @@ type User struct {
 	CreatedAt pgtype.Timestamp
 	UpdatedAt pgtype.Timestamp
 	CreatedBy pgtype.Text
+	UpdatedBy pgtype.Text
+	DeletedBy pgtype.Text
 }
