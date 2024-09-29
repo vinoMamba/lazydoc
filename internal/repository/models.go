@@ -19,4 +19,5 @@ type User struct {
 	DeletedAt pgtype.Timestamp
 	CreatedAt pgtype.Timestamp
 	UpdatedAt pgtype.Timestamp
+	CreatedBy pgtype.Text
 }

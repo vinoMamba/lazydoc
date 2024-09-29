@@ -1,5 +1,5 @@
-export default function WorkbenchPage(){
+export default function WorkbenchPage() {
   return (
-  <div>workbench</div>
+    <div>workbench</div>
   )
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/internal/service"
 )
@@ -9,6 +10,8 @@ import (
 type UserHandler interface {
 	LoginPwd(c fiber.Ctx) error
 	GetUserInfo(c fiber.Ctx) error
+	GetUserList(c fiber.Ctx) error
+	AddUser(c fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -49,4 +52,28 @@ func (u *userHandler) GetUserInfo(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(userInfo)
+}
+
+func (u *userHandler) GetUserList(c fiber.Ctx) error {
+	queris := c.Queries()
+	log.Infof("queris: %v", queris)
+	return c.Status(fiber.StatusOK).JSON(queris)
+}
+
+func (u *userHandler) AddUser(c fiber.Ctx) error {
+	uid := GetUserIdFromLocals(c)
+	params := new(req.AddUserReq)
+	if err := c.Bind().JSON(params); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	if err := u.userService.AddUserService(c, uid, params); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
 }

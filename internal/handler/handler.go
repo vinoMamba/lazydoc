@@ -10,8 +10,3 @@ func GetUserIdFromLocals(c fiber.Ctx) string {
 	user := c.Locals(middleware.UserKey)
 	return user.(*jwt.CustomClaims).UserId
 }
-
-func GetSpaceIdFromLocals(c fiber.Ctx) string {
-	user := c.Locals(middleware.UserKey)
-	return user.(*jwt.CustomClaims).ActiveSpaceId
-}

@@ -2,17 +2,21 @@ package service
 
 import (
 	"errors"
+	"time"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/api/res"
+	"github.com/vinoMamba/lazydoc/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
 	LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginRes, error)
 	GetUserInfoService(ctx fiber.Ctx, userId string) (*res.UserInfoRes, error)
+	AddUserService(ctx fiber.Ctx, uid string, req *req.AddUserReq) error
 }
 
 type userService struct {
@@ -63,4 +67,38 @@ func (s *userService) GetUserInfoService(ctx fiber.Ctx, userId string) (*res.Use
 		Email:    u.Email,
 		IsSuper:  u.IsSuper.Bool,
 	}, nil
+}
+
+func (s *userService) AddUserService(ctx fiber.Ctx, uid string, req *req.AddUserReq) error {
+	_, err := s.queries.GetUserByEmail(ctx.Context(), req.Email)
+	if err == nil {
+		return errors.New("current email has registered ")
+	}
+
+	userId, err := s.sid.GenString()
+	if err != nil {
+		log.Errorf("[sid] generate userId error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	default_password := "123456"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(default_password), bcrypt.DefaultCost)
+
+	if err != nil {
+		log.Errorf("Create hash password error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if err := s.queries.InsertUser(ctx.Context(), repository.InsertUserParams{
+		ID:        userId,
+		Username:  req.Username,
+		Email:     req.Email,
+		Password:  string(hashedPassword),
+		CreatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+		CreatedBy: pgtype.Text{String: uid, Valid: true},
+	}); err != nil {
+		log.Errorf("[database] error: %v", err)
+		return errors.New("internal server error")
+	}
+	return nil
 }

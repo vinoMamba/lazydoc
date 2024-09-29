@@ -7,10 +7,12 @@ package repository
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at FROM users 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by FROM users 
 WHERE email = $1 LIMIT 1
 `
 
@@ -28,12 +30,13 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.DeletedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.CreatedBy,
 	)
 	return i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at FROM users 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by FROM users 
 WHERE id = $1 LIMIT 1
 `
 
@@ -51,6 +54,88 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.DeletedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.CreatedBy,
 	)
 	return i, err
+}
+
+const getUserList = `-- name: GetUserList :many
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by 
+FROM users 
+WHERE username LIKE $1 AND email LIKE $2 AND is_deleted = false AND is_super = false
+ORDER BY created_at DESC
+LIMIT $3 OFFSET $4
+`
+
+type GetUserListParams struct {
+	Username string
+	Email    string
+	Limit    int32
+	Offset   int32
+}
+
+func (q *Queries) GetUserList(ctx context.Context, arg GetUserListParams) ([]User, error) {
+	rows, err := q.db.Query(ctx, getUserList,
+		arg.Username,
+		arg.Email,
+		arg.Limit,
+		arg.Offset,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.Email,
+			&i.Avatar,
+			&i.Password,
+			&i.IsSuper,
+			&i.IsDeleted,
+			&i.DeletedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CreatedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const insertUser = `-- name: InsertUser :exec
+INSERT INTO users (
+  id,username,email,password,created_at,created_by
+) VALUES (
+  $1, $2, $3, $4, $5, $6
+)
+`
+
+type InsertUserParams struct {
+	ID        string
+	Username  string
+	Email     string
+	Password  string
+	CreatedAt pgtype.Timestamp
+	CreatedBy pgtype.Text
+}
+
+func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
+	_, err := q.db.Exec(ctx, insertUser,
+		arg.ID,
+		arg.Username,
+		arg.Email,
+		arg.Password,
+		arg.CreatedAt,
+		arg.CreatedBy,
+	)
+	return err
 }
