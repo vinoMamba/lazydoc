@@ -1,8 +1,9 @@
 package handler
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/log"
 	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/internal/service"
 )
@@ -56,8 +57,34 @@ func (u *userHandler) GetUserInfo(c fiber.Ctx) error {
 
 func (u *userHandler) GetUserList(c fiber.Ctx) error {
 	queris := c.Queries()
-	log.Infof("queris: %v", queris)
-	return c.Status(fiber.StatusOK).JSON(queris)
+
+	pageSizeStr := queris["pageSize"]
+
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "pageSize is required",
+		})
+	}
+
+	pageNumStr := queris["pageNum"]
+	pageNum, err := strconv.Atoi(pageNumStr)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "pageSize and pageNum is required",
+		})
+	}
+
+	result, err := u.userService.GetUserListService(c, pageSize, pageNum, queris["condition"])
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
 func (u *userHandler) AddUser(c fiber.Ctx) error {

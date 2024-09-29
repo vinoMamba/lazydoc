@@ -17,6 +17,7 @@ type UserService interface {
 	LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginRes, error)
 	GetUserInfoService(ctx fiber.Ctx, userId string) (*res.UserInfoRes, error)
 	AddUserService(ctx fiber.Ctx, uid string, req *req.AddUserReq) error
+	GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, condition string) (*res.UserListRes, error)
 }
 
 type userService struct {
@@ -101,4 +102,54 @@ func (s *userService) AddUserService(ctx fiber.Ctx, uid string, req *req.AddUser
 		return errors.New("internal server error")
 	}
 	return nil
+}
+
+func (s *userService) GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, condition string) (*res.UserListRes, error) {
+
+	limit := int32(pageSize)
+	offset := int32((pageNum - 1) * pageSize)
+
+	list, err := s.queries.GetUserList(ctx.Context(), repository.GetUserListParams{
+		Username: "%" + condition + "%",
+		Email:    "%" + condition + "%",
+		Limit:    limit,
+		Offset:   offset,
+	})
+
+	if err != nil {
+		log.Errorf("[database] get user list error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+
+	var items []*res.UserInfoRes
+
+	for _, item := range list {
+		i := &res.UserInfoRes{
+			UserId:   item.ID,
+			Avatar:   item.Avatar.String,
+			Username: item.Username,
+			Email:    item.Email,
+			IsSuper:  item.IsDeleted.Bool,
+		}
+		items = append(items, i)
+	}
+
+	count, err := s.queries.GetUserListCount(ctx.Context(), repository.GetUserListCountParams{
+		Username: "%" + condition + "%",
+		Email:    "%" + condition + "%",
+	})
+
+	if err != nil {
+		log.Errorf("[database] get user count error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+
+	result := &res.UserListRes{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Total:    int(count),
+		Items:    items,
+	}
+
+	return result, nil
 }

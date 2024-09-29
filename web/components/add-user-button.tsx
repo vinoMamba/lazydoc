@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { Button } from "./ui/button"
 import { UserRoundPlus } from "lucide-react"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader } from "@/components/ui/dialog"
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "./ui/input"
@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { createUserAction } from "@/action/create-user"
 import { toast } from "sonner"
+import { DialogTitle } from "@radix-ui/react-dialog"
 
 export const AddUserButton = () => {
   const [open, setOpen] = useState(false)
@@ -49,7 +50,10 @@ export const AddUserButton = () => {
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="top-1/4">
-          <p className=" text-xl font-semibold">Create a user</p>
+          <DialogHeader>
+            <DialogTitle>Create user</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
           <Form {...form}>
             <form onSubmit={onSubmit}>
               <div className="space-y-8">

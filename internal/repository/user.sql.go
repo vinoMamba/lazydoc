@@ -62,7 +62,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 const getUserList = `-- name: GetUserList :many
 SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by 
 FROM users 
-WHERE username LIKE $1 AND email LIKE $2 AND is_deleted = false AND is_super = false
+WHERE username LIKE $1 OR email LIKE $2 AND is_deleted = false AND is_super = false
 ORDER BY created_at DESC
 LIMIT $3 OFFSET $4
 `
@@ -109,6 +109,22 @@ func (q *Queries) GetUserList(ctx context.Context, arg GetUserListParams) ([]Use
 		return nil, err
 	}
 	return items, nil
+}
+
+const getUserListCount = `-- name: GetUserListCount :one
+SELECT COUNT(*) FROM users WHERE username LIKE $1 OR email LIKE $2 AND is_deleted = false AND is_super = false
+`
+
+type GetUserListCountParams struct {
+	Username string
+	Email    string
+}
+
+func (q *Queries) GetUserListCount(ctx context.Context, arg GetUserListCountParams) (int64, error) {
+	row := q.db.QueryRow(ctx, getUserListCount, arg.Username, arg.Email)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const insertUser = `-- name: InsertUser :exec

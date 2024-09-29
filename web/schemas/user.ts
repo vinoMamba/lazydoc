@@ -8,7 +8,12 @@ export const UserInfoSchema = z.object({
   isSuper: z.boolean()
 })
 
-export const UserListSchema = z.array(UserInfoSchema)
+export const UserListSchema = z.object({
+  pageSize: z.number(),
+  pageNum: z.number(),
+  total: z.number(),
+  items: z.array(UserInfoSchema).nullable()
+})
 
 export const CreatUserSchema = z.object({
   username: z.string().max(10).min(2),

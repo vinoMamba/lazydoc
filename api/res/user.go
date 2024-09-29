@@ -11,3 +11,10 @@ type UserInfoRes struct {
 	UserId   string `json:"userId"`
 	IsSuper  bool   `json:"isSuper"`
 }
+
+type UserListRes struct {
+	PageNum  int            `json:"pageNum"`
+	PageSize int            `json:"pageSize"`
+	Total    int            `json:"total"`
+	Items    []*UserInfoRes `json:"items"`
+}

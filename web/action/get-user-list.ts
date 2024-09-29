@@ -1,13 +1,18 @@
 "use server"
 
-import { UserInfoSchema } from "@/schemas/user"
+import { UserListSchema } from "@/schemas/user"
 import { cookies } from "next/headers"
 
 
-export const getUserListAction = async () => {
+export type SearchParams = {
+  pageNum: number
+  condition?: string
+}
+
+export const getUserListAction = async ({ pageNum, condition = '' }: SearchParams) => {
   try {
     const token = cookies().get('token')?.value
-    const result = await fetch(process.env.NEXT_API_URL + "/user/list?pageSize=10&pageNum=1&username=1&email=111@qq.com", {
+    const result = await fetch(`${process.env.NEXT_API_URL}/user/list?pageSize=10&pageNum=${pageNum}&condition=${condition}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -17,15 +22,16 @@ export const getUserListAction = async () => {
         tags: ['getUserList']
       }
     })
+
     const json = await result.json();
-    const userInfo = UserInfoSchema.safeParse(json)
+    const userInfo = UserListSchema.safeParse(json)
     if (userInfo.success) {
       return userInfo.data
     } else {
-      return []
+      return null
     }
   } catch (error) {
     console.error(error)
-    return []
+    return null
   }
 }
