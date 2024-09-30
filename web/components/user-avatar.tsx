@@ -31,7 +31,7 @@ export const UserAvatar = async ({ showPopover = true, className }: Props) => {
                 <PopoverContent side="right" align="start" className=" space-y-4 ml-1">
                   <div className="flex gap-2">
                     <Avatar className="w-16 h-16">
-                      <AvatarImage src={userInfo?.avatar} alt={userInfo?.username} />
+                    <AvatarImage src={url} alt={userInfo?.username} />
                       <AvatarFallback className="text-muted-foreground">{fallbackStr}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-1">

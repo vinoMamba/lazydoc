@@ -22,9 +22,10 @@ export const columns: ColumnDef<UserItem>[] = [
     header: "Avatar",
     cell: ({ row }) => {
       const fallbackStr = getFirstStr(row.original.username || "CN")
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/upload/icon/${row.original.avatar}`
       return (
         <Avatar className="w-[2rem] h-[2rem]">
-          <AvatarImage src={row.original.avatar} alt={row.original.username} />
+          <AvatarImage src={url} alt={row.original.username} />
           <AvatarFallback className="text-muted-foreground">{fallbackStr}</AvatarFallback>
         </Avatar>
       )
