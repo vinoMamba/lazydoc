@@ -1,3 +1,4 @@
+import { Profile } from "@/components/profile"
 import { Security } from "@/components/security"
 import { ThemeSelect } from "@/components/theme-select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +11,7 @@ export default async function SettingsPage() {
         <CardDescription> Manage your account settings and set theme preferences.</CardDescription>
       </CardHeader>
       <CardContent className="max-w-screen-md space-y-4">
+        <Profile/>
         <Security />
         <ThemeSelect />
       </CardContent>

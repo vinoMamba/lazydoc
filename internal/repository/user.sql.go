@@ -170,3 +170,79 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
 	)
 	return err
 }
+
+const updateAvatarById = `-- name: UpdateAvatarById :exec
+UPDATE users 
+SET 
+  avatar = $1,
+  updated_at = $2
+WHERE id = $3
+`
+
+type UpdateAvatarByIdParams struct {
+	Avatar    pgtype.Text
+	UpdatedAt pgtype.Timestamp
+	ID        string
+}
+
+func (q *Queries) UpdateAvatarById(ctx context.Context, arg UpdateAvatarByIdParams) error {
+	_, err := q.db.Exec(ctx, updateAvatarById, arg.Avatar, arg.UpdatedAt, arg.ID)
+	return err
+}
+
+const updateEmailById = `-- name: UpdateEmailById :exec
+UPDATE users
+SET 
+  email = $1 ,
+  updated_at = $2
+WHERE id = $3
+`
+
+type UpdateEmailByIdParams struct {
+	Email     string
+	UpdatedAt pgtype.Timestamp
+	ID        string
+}
+
+func (q *Queries) UpdateEmailById(ctx context.Context, arg UpdateEmailByIdParams) error {
+	_, err := q.db.Exec(ctx, updateEmailById, arg.Email, arg.UpdatedAt, arg.ID)
+	return err
+}
+
+const updatePasswordById = `-- name: UpdatePasswordById :exec
+UPDATE users
+SET 
+  password = $1 ,
+  updated_at = $2
+WHERE id = $3
+`
+
+type UpdatePasswordByIdParams struct {
+	Password  string
+	UpdatedAt pgtype.Timestamp
+	ID        string
+}
+
+func (q *Queries) UpdatePasswordById(ctx context.Context, arg UpdatePasswordByIdParams) error {
+	_, err := q.db.Exec(ctx, updatePasswordById, arg.Password, arg.UpdatedAt, arg.ID)
+	return err
+}
+
+const updateUsernameById = `-- name: UpdateUsernameById :exec
+UPDATE users
+SET 
+  username = $1 ,
+  updated_at = $2
+WHERE id = $3
+`
+
+type UpdateUsernameByIdParams struct {
+	Username  string
+	UpdatedAt pgtype.Timestamp
+	ID        string
+}
+
+func (q *Queries) UpdateUsernameById(ctx context.Context, arg UpdateUsernameByIdParams) error {
+	_, err := q.db.Exec(ctx, updateUsernameById, arg.Username, arg.UpdatedAt, arg.ID)
+	return err
+}

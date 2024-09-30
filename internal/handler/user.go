@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/labstack/gommon/log"
 	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/internal/service"
 )
@@ -14,6 +15,9 @@ type UserHandler interface {
 	GetUserList(c fiber.Ctx) error
 	AddUser(c fiber.Ctx) error
 	DeleteUser(c fiber.Ctx) error
+	UpdateUserAvatar(c fiber.Ctx) error
+	UpdateUserPassword(c fiber.Ctx) error
+	UpdateUserEmail(c fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -117,4 +121,31 @@ func (u *userHandler) DeleteUser(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ok",
 	})
+}
+
+func (u *userHandler) UpdateUserAvatar(c fiber.Ctx) error {
+
+	userId := GetUserIdFromLocals(c)
+	file, err := c.FormFile("file")
+	if err != nil {
+		log.Errorf("Read file error: %v", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	if err := u.userService.UpdateUserAvatarService(c, file, userId); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+func (u *userHandler) UpdateUserPassword(c fiber.Ctx) error {
+	return nil
+}
+func (u *userHandler) UpdateUserEmail(c fiber.Ctx) error {
+	return nil
 }

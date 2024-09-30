@@ -25,3 +25,32 @@ SELECT COUNT(*) FROM users WHERE username LIKE $1 OR email LIKE $2 AND is_delete
 
 -- name: DeleteUserById :exec
 DELETE FROM users WHERE id = $1;
+
+-- name: UpdateAvatarById :exec
+UPDATE users 
+SET 
+  avatar = $1,
+  updated_at = $2
+WHERE id = $3;
+
+-- name: UpdateUsernameById :exec
+UPDATE users
+SET 
+  username = $1 ,
+  updated_at = $2
+WHERE id = $3;
+
+-- name: UpdateEmailById :exec
+UPDATE users
+SET 
+  email = $1 ,
+  updated_at = $2
+WHERE id = $3;
+
+-- name: UpdatePasswordById :exec
+UPDATE users
+SET 
+  password = $1 ,
+  updated_at = $2
+WHERE id = $3;
+

@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/vinoMamba/lazydoc/internal/handler"
 	"github.com/vinoMamba/lazydoc/internal/middleware"
 	"github.com/vinoMamba/lazydoc/pkg/jwt"
@@ -32,11 +33,18 @@ func NewHttpServer(
 		StructValidator: &structValidator{validate: validator.New()},
 	})
 
+	//upload file
+	app.Get("/upload/icon/*", static.New("./storage/icons"))
+
 	app.Post("/login/password", userHandler.LoginPwd)
 
 	user := app.Group("/user")
 	user.Use(middleware.JWTMiddleware(jwt))
 	user.Post("", userHandler.AddUser)
+	user.Put("/password", userHandler.AddUser)
+	user.Put("/username", userHandler.AddUser)
+	user.Put("/email", userHandler.AddUser)
+	user.Post("/avatar", userHandler.UpdateUserAvatar)
 	user.Delete("", userHandler.DeleteUser)
 	user.Get("/info", userHandler.GetUserInfo)
 	user.Get("/list", userHandler.GetUserList)

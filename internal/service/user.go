@@ -2,10 +2,15 @@ package service
 
 import (
 	"errors"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
+	"github.com/h2non/filetype"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/api/res"
@@ -19,6 +24,7 @@ type UserService interface {
 	AddUserService(ctx fiber.Ctx, uid string, req *req.AddUserReq) error
 	GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, condition string) (*res.UserListRes, error)
 	DeleteUserService(ctx fiber.Ctx, userId string) error
+	UpdateUserAvatarService(ctx fiber.Ctx, file *multipart.FileHeader, userId string) error
 }
 
 type userService struct {
@@ -165,4 +171,40 @@ func (s *userService) DeleteUserService(ctx fiber.Ctx, userId string) error {
 	}
 
 	return nil
+}
+
+func (s *userService) UpdateUserAvatarService(ctx fiber.Ctx, file *multipart.FileHeader, userId string) error {
+	f, err := file.Open()
+	if err != nil {
+		log.Errorf("open file error: &v", err)
+		return err
+	}
+
+	defer f.Close()
+	fileBytes, err := io.ReadAll(f)
+
+	if err != nil {
+		log.Errorf("read file error: &v", err)
+		return err
+	}
+
+	isImage := filetype.IsImage(fileBytes)
+	if !isImage {
+		return errors.New("this file is not image")
+	}
+
+	fileName := fmt.Sprintf("%s_%s_%s", userId, strconv.FormatInt(time.Now().Unix(), 10), file.Filename)
+	filePath := s.config.GetString("asset.icon_file_path") + fileName
+
+	params := repository.UpdateAvatarByIdParams{
+		Avatar:    pgtype.Text{Valid: true, String: fileName},
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+	}
+	if err := s.queries.UpdateAvatarById(ctx.Context(), params); err != nil {
+		log.Errorf("database error: &v", err)
+		return errors.New("internal server error")
+	}
+
+	return ctx.SaveFile(file, filePath)
 }
