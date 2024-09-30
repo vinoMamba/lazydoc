@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { KeyboardEventHandler, useEffect, useState, useTransition } from "react"
 import { toast } from "sonner"
+import { updateUsernameAction } from "@/action/update-username"
 
 type Props = {
   value?: string
@@ -24,13 +25,13 @@ export const Inputer = ({ value = "" }: Props) => {
       return
     }
     try {
-      //const { code, message } = await updateProfileAction({ username })
-      //if (code === 200) {
-      //  toast.success(message)
-      //} else {
-      //  setUsername(value)
-      //  toast.error(message)
-      //}
+      const { code, message } = await updateUsernameAction(username)
+      if (code === 200) {
+        toast.success(message)
+      } else {
+        setUsername(value)
+        toast.error(message)
+      }
     } finally {
       toggleDisabled(true)
     }

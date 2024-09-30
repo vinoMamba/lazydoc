@@ -42,7 +42,7 @@ func NewHttpServer(
 	user.Use(middleware.JWTMiddleware(jwt))
 	user.Post("", userHandler.AddUser)
 	user.Put("/password", userHandler.AddUser)
-	user.Put("/username", userHandler.AddUser)
+	user.Put("/username", userHandler.UpdateUsername)
 	user.Put("/email", userHandler.AddUser)
 	user.Post("/avatar", userHandler.UpdateUserAvatar)
 	user.Delete("", userHandler.DeleteUser)

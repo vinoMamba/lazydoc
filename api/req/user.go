@@ -9,3 +9,7 @@ type AddUserReq struct {
 	Email    string `json:"email" validate:"required,email"`
 	Username string `json:"username" validate:"required,gte=2,lte=10"`
 }
+
+type UpdateUsernameReq struct {
+	Username string `json:"username" validate:"required,gte=2,lte=10"`
+}

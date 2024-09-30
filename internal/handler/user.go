@@ -16,6 +16,7 @@ type UserHandler interface {
 	AddUser(c fiber.Ctx) error
 	DeleteUser(c fiber.Ctx) error
 	UpdateUserAvatar(c fiber.Ctx) error
+	UpdateUsername(c fiber.Ctx) error
 	UpdateUserPassword(c fiber.Ctx) error
 	UpdateUserEmail(c fiber.Ctx) error
 }
@@ -143,6 +144,28 @@ func (u *userHandler) UpdateUserAvatar(c fiber.Ctx) error {
 		"message": "ok",
 	})
 }
+
+func (u *userHandler) UpdateUsername(c fiber.Ctx) error {
+	userId := GetUserIdFromLocals(c)
+	params := new(req.UpdateUsernameReq)
+
+	if err := c.Bind().JSON(params); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := u.userService.UpdateUsernameService(c, userId, params.Username); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
 func (u *userHandler) UpdateUserPassword(c fiber.Ctx) error {
 	return nil
 }

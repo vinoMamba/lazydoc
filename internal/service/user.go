@@ -25,6 +25,7 @@ type UserService interface {
 	GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, condition string) (*res.UserListRes, error)
 	DeleteUserService(ctx fiber.Ctx, userId string) error
 	UpdateUserAvatarService(ctx fiber.Ctx, file *multipart.FileHeader, userId string) error
+	UpdateUsernameService(ctx fiber.Ctx, userId, username string) error
 }
 
 type userService struct {
@@ -202,9 +203,22 @@ func (s *userService) UpdateUserAvatarService(ctx fiber.Ctx, file *multipart.Fil
 		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
 	}
 	if err := s.queries.UpdateAvatarById(ctx.Context(), params); err != nil {
-		log.Errorf("database error: &v", err)
+		log.Errorf("[database] upload avatar error: &v", err)
 		return errors.New("internal server error")
 	}
 
 	return ctx.SaveFile(file, filePath)
+}
+
+func (s *userService) UpdateUsernameService(ctx fiber.Ctx, userId, username string) error {
+
+	if err := s.queries.UpdateUsernameById(ctx.Context(), repository.UpdateUsernameByIdParams{
+		Username:  username,
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+	}); err != nil {
+		log.Errorf("[database] update username error: &v", err)
+		return errors.New("internal server error")
+	}
+	return nil
 }
