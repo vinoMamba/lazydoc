@@ -21,7 +21,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         <header className="fixed backdrop-blur w-full top-0 z-30 flex h-14 items-center justify-between gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent md:hidden sm:hidden">
           <SheetNavList />
           <Logo />
-          <UserAvatar />
+          <UserAvatar showPopover={false} />
         </header>
         <div className="w-full h-full mt-14 sm:mt-0 pl-0 sm:pl-14">
           {children}
