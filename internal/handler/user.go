@@ -167,8 +167,42 @@ func (u *userHandler) UpdateUsername(c fiber.Ctx) error {
 }
 
 func (u *userHandler) UpdateUserPassword(c fiber.Ctx) error {
-	return nil
+	userId := GetUserIdFromLocals(c)
+	params := new(req.UpdateUserPasswordReq)
+
+	if err := c.Bind().JSON(params); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := u.userService.UpdateUserPasswordService(c, userId, params); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
 }
 func (u *userHandler) UpdateUserEmail(c fiber.Ctx) error {
-	return nil
+	userId := GetUserIdFromLocals(c)
+	params := new(req.UpdateUserEmailReq)
+
+	if err := c.Bind().JSON(params); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := u.userService.UpdateUserEmailService(c, userId, params); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
 }

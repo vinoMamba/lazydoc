@@ -1,6 +1,6 @@
 "use client"
 import { cn } from "@/lib/utils"
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -10,8 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useState } from "react"
 import { UpdateEmailSchema } from "@/schemas/auth"
-//import { toast } from "sonner"
-//import { logoutAction } from "@/action/logout"
+import { updateUserEmailAction } from "@/action/update-email"
+import { toast } from "sonner"
+import { logoutAction } from "@/action/logout"
 
 type Props = {
   email?: string
@@ -27,19 +28,19 @@ export const EmailDialog = ({ email = "" }: Props) => {
     }
   })
 
-  const onSubmit = form.handleSubmit(async () => {
-    //try {
-    //  const { code, message } = await updateEmailAction(values)
-    //  if (code === 200) {
-    //    toast.success(message)
-    //    logoutAction()
-    //  } else {
-    //    toast.error(message)
-    //    form.setValue('email', email)
-    //  }
-    //} finally {
-    //  setOpen(false)
-    //}
+  const onSubmit = form.handleSubmit(async (values) => {
+    try {
+      const { code, message } = await updateUserEmailAction(values)
+      if (code === 200) {
+        toast.success(message)
+        logoutAction()
+      } else {
+        toast.error(message)
+        form.setValue('email', email)
+      }
+    } finally {
+      setOpen(false)
+    }
   })
 
   return (
@@ -49,6 +50,8 @@ export const EmailDialog = ({ email = "" }: Props) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
+          <DialogTitle>Change email</DialogTitle>
+          <DialogDescription></DialogDescription>
           <div className=" flex items-center gap-x-1">
             <span>Your current email is </span>
             <b> {email}</b>

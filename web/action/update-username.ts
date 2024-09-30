@@ -22,7 +22,7 @@ export const updateUsernameAction = async (username: string) => {
       return resOk("update username successful")
     } else {
       console.log(json)
-      return resErr(json.message)
+      return resErr(json.error)
     }
   } catch (error) {
     console.error(error)

@@ -26,6 +26,8 @@ type UserService interface {
 	DeleteUserService(ctx fiber.Ctx, userId string) error
 	UpdateUserAvatarService(ctx fiber.Ctx, file *multipart.FileHeader, userId string) error
 	UpdateUsernameService(ctx fiber.Ctx, userId, username string) error
+	UpdateUserPasswordService(ctx fiber.Ctx, userId string, req *req.UpdateUserPasswordReq) error
+	UpdateUserEmailService(ctx fiber.Ctx, userId string, req *req.UpdateUserEmailReq) error
 }
 
 type userService struct {
@@ -220,5 +222,53 @@ func (s *userService) UpdateUsernameService(ctx fiber.Ctx, userId, username stri
 		log.Errorf("[database] update username error: &v", err)
 		return errors.New("internal server error")
 	}
+	return nil
+}
+
+func (s *userService) UpdateUserPasswordService(ctx fiber.Ctx, userId string, req *req.UpdateUserPasswordReq) error {
+	u, err := s.queries.GetUserById(ctx.Context(), userId)
+	if err != nil {
+		return errors.New("Can't find user")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(req.OldPassword)); err != nil {
+		log.Errorf("compare hash password error: %v", err)
+		return errors.New("The old password is incorrect.")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Errorf("[bcrypt] error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if err := s.queries.UpdatePasswordById(ctx.Context(), repository.UpdatePasswordByIdParams{
+		Password:  string(hashedPassword),
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+	}); err != nil {
+		log.Errorf("[database] update user password error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
+}
+
+func (s *userService) UpdateUserEmailService(ctx fiber.Ctx, userId string, req *req.UpdateUserEmailReq) error {
+
+	u, err := s.queries.GetUserByEmail(ctx.Context(), req.Email)
+	if err == nil && u.IsDeleted.Bool == true {
+		return errors.New("current email has registered")
+	}
+
+	if err := s.queries.UpdateEmailById(ctx.Context(), repository.UpdateEmailByIdParams{
+		Email:     req.Email,
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+	}); err != nil {
+		log.Errorf("[database] update user email error: %v", err)
+		return errors.New("internal server error")
+	}
+
 	return nil
 }

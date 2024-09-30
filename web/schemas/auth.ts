@@ -10,6 +10,6 @@ export const UpdateEmailSchema = z.object({
 })
 
 export const UpdatePasswordSchema = z.object({
-  password: z.string().min(6).max(20),
+  oldPassword: z.string().min(6).max(20),
   newPassword: z.string().min(6).max(20)
 })

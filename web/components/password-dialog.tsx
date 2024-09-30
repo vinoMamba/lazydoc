@@ -2,7 +2,9 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -16,29 +18,32 @@ import { Keyboard } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { UpdatePasswordSchema } from "@/schemas/auth"
 import { useState } from "react"
+import { updateUserPasswordlAction } from "@/action/update-password"
+import { toast } from "sonner"
+import { logoutAction } from "@/action/logout"
 
 export const PasswordDialog = () => {
   const [open, setOpen] = useState(false)
   const form = useForm<z.infer<typeof UpdatePasswordSchema>>({
     resolver: zodResolver(UpdatePasswordSchema),
     defaultValues: {
-      password: "",
+      oldPassword: "",
       newPassword: "",
     }
   })
-  const onSubmit = form.handleSubmit(async () => {
-    //try {
-    //  const { code, message } = await updatePasswordAction(values)
-    //  if (code === 200) {
-    //    toast.success(message)
-    //    logoutAction()
-    //  } else {
-    //    toast.error(message)
-    //  }
-    //} finally {
-    //  setOpen(false)
-    //  form.reset()
-    //}
+  const onSubmit = form.handleSubmit(async (values) => {
+    try {
+      const { code, message } = await updateUserPasswordlAction(values)
+      if (code === 200) {
+        toast.success(message)
+        logoutAction()
+      } else {
+        toast.error(message)
+      }
+    } finally {
+      setOpen(false)
+      form.reset()
+    }
   })
 
   return (
@@ -48,6 +53,8 @@ export const PasswordDialog = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
+          <DialogTitle>Change password</DialogTitle>
+          <DialogDescription></DialogDescription>
           <div className=" flex flex-col items-center justify-center gap-2 text-center">
             <Keyboard />
             <p className=" font-semibold">Change password</p>
@@ -67,7 +74,7 @@ export const PasswordDialog = () => {
           >
             <FormField
               control={form.control}
-              name="password"
+              name="oldPassword"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Please enter your old password.</FormLabel>
