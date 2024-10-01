@@ -5,13 +5,13 @@ import { cookies } from "next/headers"
 
 
 export type SearchParams = {
-  projectName?: string
+  name?: string
 }
 
-export const getProjectListAction = async ({ projectName = '' }: SearchParams) => {
+export const getProjectListAction = async ({ name = '' }: SearchParams) => {
   try {
     const token = cookies().get('token')?.value
-    const result = await fetch(`${process.env.NEXT_API_URL}/project/list?name=${projectName}`, {
+    const result = await fetch(`${process.env.NEXT_API_URL}/project/list?name=${name}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
