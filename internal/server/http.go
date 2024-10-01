@@ -27,6 +27,7 @@ func (v *structValidator) Engine() any {
 
 func NewHttpServer(
 	userHandler handler.UserHandler,
+	projectHandler handler.ProjectHandler,
 	jwt *jwt.JWT,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
@@ -48,6 +49,12 @@ func NewHttpServer(
 	user.Delete("", userHandler.DeleteUser)
 	user.Get("/info", userHandler.GetUserInfo)
 	user.Get("/list", userHandler.GetUserList)
+
+	project := app.Group("/project")
+	project.Use(middleware.JWTMiddleware(jwt))
+	project.Post("", projectHandler.CreateProject)
+	project.Put("", projectHandler.UpdateProject)
+	project.Get("/list", projectHandler.GetProjectList)
 
 	app.Use(middleware.NotFound())
 	return app

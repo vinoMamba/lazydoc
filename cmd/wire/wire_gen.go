@@ -32,7 +32,9 @@ func NewApp(viperViper *viper.Viper) (*fiber.App, func(), error) {
 	serviceService := service.NewService(queries, sidSid, jwtJWT, viperViper, mailMail, redisInternal)
 	userService := service.NewUserService(serviceService)
 	userHandler := handler.NewUserHandler(userService)
-	app := server.NewHttpServer(userHandler, jwtJWT)
+	projectService := service.NewProjectService(serviceService)
+	projectHandler := handler.NewProjectHandler(projectService)
+	app := server.NewHttpServer(userHandler, projectHandler, jwtJWT)
 	return app, func() {
 	}, nil
 }
@@ -41,6 +43,6 @@ func NewApp(viperViper *viper.Viper) (*fiber.App, func(), error) {
 
 var serverSet = wire.NewSet(server.NewHttpServer)
 
-var handlerSet = wire.NewSet(handler.NewUserHandler)
+var handlerSet = wire.NewSet(handler.NewUserHandler, handler.NewProjectHandler)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewUserService, repository.New, repository.NewConn, redis.NewRedisConn)
+var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewProjectService, repository.New, repository.NewConn, redis.NewRedisConn)

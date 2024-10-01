@@ -1,25 +1,27 @@
 "use client"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { UserRoundPlus } from "lucide-react"
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useForm } from "react-hook-form"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { CreatUserSchema } from "@/schemas/user"
+import { Button } from "@/components/ui/button"
+import { FolderCheck } from "lucide-react"
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { createUserAction } from "@/action/create-user"
+import { CreateProjectSchema } from "@/schemas/project"
+import { createProjectAction } from "@/action/create-project"
 import { toast } from "sonner"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
-export const AddUserButton = () => {
+export const AddProjectButton = () => {
   const [open, setOpen] = useState(false)
 
-  const form = useForm<z.infer<typeof CreatUserSchema>>({
-    resolver: zodResolver(CreatUserSchema),
+  const form = useForm<z.infer<typeof CreateProjectSchema>>({
+    resolver: zodResolver(CreateProjectSchema),
     defaultValues: {
-      email: '',
-      username: ''
+      name: '',
+      description: ''
     },
   })
 
@@ -30,7 +32,7 @@ export const AddUserButton = () => {
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      const { code, message } = await createUserAction(values)
+      const { code, message } = await createProjectAction(values)
       if (code === 200) {
         toast.success(message)
       } else {
@@ -40,12 +42,11 @@ export const AddUserButton = () => {
       setOpen(false)
     }
   })
-
   return (
-    <div>
-      <Button className="flex items-center gap-1" size="sm" onClick={handleClick}>
-        <UserRoundPlus className=" w-[1rem] h-[1rem]" />
-        Add user
+    <>
+      <Button className="flex items-center gap-1" onClick={handleClick}>
+        <FolderCheck className="w-[1rem] h-[1rem]" />
+        Add project
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="top-1/4">
@@ -58,11 +59,11 @@ export const AddUserButton = () => {
               <div className="space-y-8">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input {...field} placeholder="Enter username" />
+                        <Input {...field} placeholder="Enter project name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -70,11 +71,15 @@ export const AddUserButton = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="description"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input {...field} placeholder="Enter email" type="email" />
+                        <Textarea
+                          placeholder="description"
+                          className="resize-none"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -86,6 +91,6 @@ export const AddUserButton = () => {
           </Form>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }

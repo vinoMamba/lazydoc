@@ -5,8 +5,77 @@
 package repository
 
 import (
+	"database/sql/driver"
+	"fmt"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type PermissionLevel string
+
+const (
+	PermissionLevelAdmin  PermissionLevel = "admin"
+	PermissionLevelEditor PermissionLevel = "editor"
+	PermissionLevelReader PermissionLevel = "reader"
+)
+
+func (e *PermissionLevel) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PermissionLevel(s)
+	case string:
+		*e = PermissionLevel(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PermissionLevel: %T", src)
+	}
+	return nil
+}
+
+type NullPermissionLevel struct {
+	PermissionLevel PermissionLevel
+	Valid           bool // Valid is true if PermissionLevel is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPermissionLevel) Scan(value interface{}) error {
+	if value == nil {
+		ns.PermissionLevel, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PermissionLevel.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPermissionLevel) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PermissionLevel), nil
+}
+
+type Project struct {
+	ID          string
+	Name        string
+	Description pgtype.Text
+	IsDeleted   pgtype.Bool
+	CreatedBy   pgtype.Text
+	CreatedAt   pgtype.Timestamp
+	UpdatedBy   pgtype.Text
+	UpdatedAt   pgtype.Timestamp
+}
+
+type ProjectUser struct {
+	ID         string
+	UserID     string
+	ProjectID  string
+	Permission NullPermissionLevel
+	IsDeleted  pgtype.Bool
+	CreatedBy  pgtype.Text
+	CreatedAt  pgtype.Timestamp
+	UpdatedBy  pgtype.Text
+	UpdatedAt  pgtype.Timestamp
+}
 
 type User struct {
 	ID        string

@@ -23,11 +23,13 @@ var serverSet = wire.NewSet(
 
 var handlerSet = wire.NewSet(
 	handler.NewUserHandler,
+	handler.NewProjectHandler,
 )
 
 var serviceSet = wire.NewSet(
 	service.NewService,
 	service.NewUserService,
+	service.NewProjectService,
 
 	repository.New,
 	repository.NewConn,
