@@ -49,9 +49,8 @@ export const EditProjectButton = ({ project }: Props) => {
   })
   return (
     <>
-      <Button size="sm" variant="link" className="flex items-center gap-1" onClick={handleClick}>
-        <Edit className=" w-[0.8rem] h-[0.8rem] text-muted-foreground" />
-        Edit
+      <Button size="sm" variant="link" className="flex items-center gap-1 mx-0 px-0" onClick={handleClick}>
+        <Edit className=" w-[1rem] h-[1rem]" />
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="top-1/4">

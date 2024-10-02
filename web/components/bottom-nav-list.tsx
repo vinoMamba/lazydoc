@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Settings } from "lucide-react";
+import { ModeToggle } from "./theme-toggle";
 
 
 const bottomNavList = [
@@ -16,6 +17,7 @@ export const BottomNavList = () => {
   const pathname = usePathname()
   return (
     <>
+      <ModeToggle />
       {
         bottomNavList.map(item => (
           <Tooltip key={item.link}>
