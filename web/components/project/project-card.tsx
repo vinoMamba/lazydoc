@@ -4,6 +4,7 @@ import { Button } from "../ui/button"
 import { TvMinimal } from "lucide-react"
 import { EditProjectButton } from "./edit-project-button"
 import { DelProjectButton } from "./del-project-button"
+import Link from "next/link"
 
 type Props = {
   project: z.infer<typeof ProjectSchema>
@@ -18,9 +19,11 @@ export const ProjectCard = ({ project }: Props) => {
       </header>
       <p className=" text-muted-foreground text-sm italic line-clamp-3">{project.description}</p>
       <div className="group-hover:flex hidden absolute bottom-2 right-2  items-center gap-2 px-4 opacity-0 group-hover:opacity-50 bg-card rounded-md ease-in duration-300">
-        <Button size="sm" variant="link" className="flex items-center gap-1 mx-0 px-0">
-          <TvMinimal className=" w-[1rem] h-[1rem]" />
-        </Button>
+        <Link href={`/workbench/${project.id}`}>
+          <Button size="sm" variant="link" className="flex items-center gap-1 mx-0 px-0">
+            <TvMinimal className=" w-[1rem] h-[1rem]" />
+          </Button>
+        </Link>
         <EditProjectButton project={project} />
         <DelProjectButton projectId={project.id} />
       </div>
