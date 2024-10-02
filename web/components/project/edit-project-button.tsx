@@ -3,25 +3,30 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import { FolderCheck } from "lucide-react"
+import { Edit } from "lucide-react"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { CreateProjectSchema } from "@/schemas/project"
-import { createProjectAction } from "@/action/create-project"
+import { ProjectSchema, UpdateProjectSchema } from "@/schemas/project"
 import { toast } from "sonner"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { updateProjectAction } from "@/action/update-project"
 
-export const AddProjectButton = () => {
+type Props = {
+  project: z.infer<typeof ProjectSchema>
+}
+
+export const EditProjectButton = ({ project }: Props) => {
   const [open, setOpen] = useState(false)
 
-  const form = useForm<z.infer<typeof CreateProjectSchema>>({
-    resolver: zodResolver(CreateProjectSchema),
+  const form = useForm<z.infer<typeof UpdateProjectSchema>>({
+    resolver: zodResolver(UpdateProjectSchema),
     defaultValues: {
-      name: '',
-      description: ''
+      id: project.id,
+      name: project.name,
+      description: project.description
     },
   })
 
@@ -32,7 +37,7 @@ export const AddProjectButton = () => {
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      const { code, message } = await createProjectAction(values)
+      const { code, message } = await updateProjectAction(values)
       if (code === 200) {
         toast.success(message)
       } else {
@@ -44,14 +49,14 @@ export const AddProjectButton = () => {
   })
   return (
     <>
-      <Button className="flex items-center gap-1" onClick={handleClick}>
-        <FolderCheck className="w-[1rem] h-[1rem]" />
-        Add project
+      <Button size="sm" variant="link" className="flex items-center gap-1" onClick={handleClick}>
+        <Edit className=" w-[0.8rem] h-[0.8rem] text-muted-foreground" />
+        Edit
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="top-1/4">
           <DialogHeader>
-            <DialogTitle>Create project</DialogTitle>
+            <DialogTitle>Update project</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
           <Form {...form}>
@@ -85,7 +90,7 @@ export const AddProjectButton = () => {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">Create</Button>
+                <Button type="submit" className="w-full">Update</Button>
               </div>
             </form>
           </Form>

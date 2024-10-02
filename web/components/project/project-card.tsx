@@ -1,7 +1,8 @@
-import { Edit, TvMinimal } from "lucide-react"
+import { TvMinimal } from "lucide-react"
 import { Button } from "../ui/button"
 import { z } from "zod"
 import { ProjectSchema } from "@/schemas/project"
+import { EditProjectButton } from "./edit-project-button"
 
 type Props = {
   project: z.infer<typeof ProjectSchema>
@@ -22,10 +23,7 @@ export const ProjectCard = ({ project }: Props) => {
           <TvMinimal className="w-[0.8rem] h-[0.8rem] text-muted-foreground" />
           View
         </Button>
-        <Button size="sm" variant="link" className="flex items-center gap-1">
-          <Edit className=" w-[0.8rem] h-[0.8rem] text-muted-foreground" />
-          Edit
-        </Button>
+        <EditProjectButton project={project} />
       </div>
     </div>
   )

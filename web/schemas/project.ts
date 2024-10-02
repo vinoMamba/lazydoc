@@ -5,6 +5,12 @@ export const CreateProjectSchema = z.object({
   description: z.string().optional()
 })
 
+export const UpdateProjectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional()
+})
+
 export const ProjectSchema = z.object({
   id: z.string(),
   name: z.string().max(20).min(1),
