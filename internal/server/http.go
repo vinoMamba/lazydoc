@@ -28,6 +28,7 @@ func (v *structValidator) Engine() any {
 func NewHttpServer(
 	userHandler handler.UserHandler,
 	projectHandler handler.ProjectHandler,
+	docHandler handler.DocHandler,
 	jwt *jwt.JWT,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
@@ -56,6 +57,10 @@ func NewHttpServer(
 	project.Put("", projectHandler.UpdateProject)
 	project.Delete("/:projectId", projectHandler.DeleteProject)
 	project.Get("/list", projectHandler.GetProjectList)
+
+	doc := app.Group("/doc")
+	doc.Use(middleware.JWTMiddleware(jwt))
+	doc.Post("", docHandler.CreateDoc)
 
 	app.Use(middleware.NotFound())
 	return app
