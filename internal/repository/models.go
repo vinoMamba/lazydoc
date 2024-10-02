@@ -54,6 +54,19 @@ func (ns NullPermissionLevel) Value() (driver.Value, error) {
 	return string(ns.PermissionLevel), nil
 }
 
+type Document struct {
+	ID        string
+	ParentID  pgtype.Text
+	ProjectID pgtype.Text
+	Name      string
+	IsFolder  pgtype.Bool
+	IsDeleted pgtype.Bool
+	CreatedBy pgtype.Text
+	CreatedAt pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
 type Project struct {
 	ID          string
 	Name        string

@@ -10,6 +10,7 @@ type ProjectHandler interface {
 	CreateProject(c fiber.Ctx) error
 	UpdateProject(c fiber.Ctx) error
 	GetProjectList(c fiber.Ctx) error
+	GetProjectInfo(c fiber.Ctx) error
 	DeleteProject(c fiber.Ctx) error
 }
 
@@ -79,6 +80,19 @@ func (h *projectHandler) GetProjectList(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(result)
 }
 
+func (h *projectHandler) GetProjectInfo(c fiber.Ctx) error {
+	projectId := c.Params("projectId")
+
+	result, err := h.projectService.GetProjectInfoService(c, projectId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
+
 func (h *projectHandler) DeleteProject(c fiber.Ctx) error {
 	userId := GetUserIdFromLocals(c)
 	projectId := c.Params("projectId")
@@ -88,6 +102,7 @@ func (h *projectHandler) DeleteProject(c fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ok",
 	})

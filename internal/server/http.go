@@ -57,6 +57,7 @@ func NewHttpServer(
 	project.Put("", projectHandler.UpdateProject)
 	project.Delete("/:projectId", projectHandler.DeleteProject)
 	project.Get("/list", projectHandler.GetProjectList)
+	project.Get("/:projectId", projectHandler.GetProjectInfo)
 
 	doc := app.Group("/doc")
 	doc.Use(middleware.JWTMiddleware(jwt))

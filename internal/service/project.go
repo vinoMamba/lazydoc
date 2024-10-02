@@ -16,6 +16,7 @@ type ProjectService interface {
 	CreateProjectService(ctx fiber.Ctx, userId string, req *req.CreateProjectReq) error
 	UpdateProjectService(ctx fiber.Ctx, userId string, req *req.UpdateProjectReq) error
 	GetProjectListService(ctx fiber.Ctx, userId, projectName string) ([]*res.ProjectRes, error)
+	GetProjectInfoService(ctx fiber.Ctx, projectId string) (*res.ProjectRes, error)
 	DeleteProjectService(ctx fiber.Ctx, userId, projectId string) error
 }
 
@@ -124,6 +125,21 @@ func (s *projectService) GetProjectListService(ctx fiber.Ctx, userId, projectNam
 
 	return pl, nil
 }
+
+func (s *projectService) GetProjectInfoService(ctx fiber.Ctx, projectId string) (*res.ProjectRes, error) {
+	p, err := s.queries.GetProjectById(ctx.Context(), projectId)
+	if err != nil {
+		log.Errorf("[database] delete project error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+	return &res.ProjectRes{
+		Id:          p.ID,
+		Name:        p.Name,
+		Description: p.Description.String,
+		CreatedAt:   p.CreatedAt.Time.Format(time.DateTime),
+	}, nil
+}
+
 func (s *projectService) DeleteProjectService(ctx fiber.Ctx, userId, projectId string) error {
 
 	tx, err := s.queries.NewDB().Begin(ctx.Context())
