@@ -112,7 +112,7 @@ func (u *userHandler) AddUser(c fiber.Ctx) error {
 }
 
 func (u *userHandler) DeleteUser(c fiber.Ctx) error {
-	userId := c.Query("userId")
+	userId := c.Params("userId")
 
 	if err := u.userService.DeleteUserService(c, userId); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

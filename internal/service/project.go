@@ -16,6 +16,7 @@ type ProjectService interface {
 	CreateProjectService(ctx fiber.Ctx, userId string, req *req.CreateProjectReq) error
 	UpdateProjectService(ctx fiber.Ctx, userId string, req *req.UpdateProjectReq) error
 	GetProjectListService(ctx fiber.Ctx, userId, projectName string) ([]*res.ProjectRes, error)
+	DeleteProjectService(ctx fiber.Ctx, userId, projectId string) error
 }
 
 type projectService struct {
@@ -122,4 +123,36 @@ func (s *projectService) GetProjectListService(ctx fiber.Ctx, userId, projectNam
 	}
 
 	return pl, nil
+}
+func (s *projectService) DeleteProjectService(ctx fiber.Ctx, userId, projectId string) error {
+
+	tx, err := s.queries.NewDB().Begin(ctx.Context())
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx.Context())
+	qtx := s.queries.WithTx(tx)
+
+	if err := qtx.DeleteProject(ctx.Context(), repository.DeleteProjectParams{
+		ID:        projectId,
+		IsDeleted: pgtype.Bool{Bool: true, Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+		UpdatedBy: pgtype.Text{String: userId, Valid: true},
+	}); err != nil {
+		log.Errorf("[database] delete project error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if err := qtx.DeleteProjectUserByProjectId(ctx.Context(), repository.DeleteProjectUserByProjectIdParams{
+		IsDeleted: pgtype.Bool{Bool: true, Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+		UpdatedBy: pgtype.Text{String: userId, Valid: true},
+		ProjectID: projectId,
+	}); err != nil {
+		log.Errorf("[database] delete project user error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return tx.Commit(ctx.Context())
 }

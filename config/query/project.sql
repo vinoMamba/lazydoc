@@ -20,7 +20,7 @@ SET
   is_deleted = $1, 
   updated_at = $2,
   updated_by = $3
-WHERE id = $3;
+WHERE id = $4;
 
 -- name: GetProjectById :one
 SELECT * FROM projects WHERE id = $1 AND is_deleted = false;

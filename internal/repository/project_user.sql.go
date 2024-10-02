@@ -11,6 +11,32 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const deleteProjectUserByProjectId = `-- name: DeleteProjectUserByProjectId :exec
+UPDATE project_users
+SET
+  is_deleted = $1, 
+  updated_at = $2,
+  updated_by = $3
+WHERE project_id = $4
+`
+
+type DeleteProjectUserByProjectIdParams struct {
+	IsDeleted pgtype.Bool
+	UpdatedAt pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	ProjectID string
+}
+
+func (q *Queries) DeleteProjectUserByProjectId(ctx context.Context, arg DeleteProjectUserByProjectIdParams) error {
+	_, err := q.db.Exec(ctx, deleteProjectUserByProjectId,
+		arg.IsDeleted,
+		arg.UpdatedAt,
+		arg.UpdatedBy,
+		arg.ProjectID,
+	)
+	return err
+}
+
 const insertProjectUser = `-- name: InsertProjectUser :exec
 INSERT INTO project_users (
   id,user_id,project_id,permission,created_by, created_at

@@ -46,7 +46,7 @@ func NewHttpServer(
 	user.Put("/username", userHandler.UpdateUsername)
 	user.Put("/email", userHandler.UpdateUserEmail)
 	user.Post("/avatar", userHandler.UpdateUserAvatar)
-	user.Delete("", userHandler.DeleteUser)
+	user.Delete("/:userId", userHandler.DeleteUser)
 	user.Get("/info", userHandler.GetUserInfo)
 	user.Get("/list", userHandler.GetUserList)
 
@@ -54,6 +54,7 @@ func NewHttpServer(
 	project.Use(middleware.JWTMiddleware(jwt))
 	project.Post("", projectHandler.CreateProject)
 	project.Put("", projectHandler.UpdateProject)
+	project.Delete("/:projectId", projectHandler.DeleteProject)
 	project.Get("/list", projectHandler.GetProjectList)
 
 	app.Use(middleware.NotFound())

@@ -5,10 +5,10 @@ import { revalidateTag } from "next/cache"
 import { cookies } from "next/headers"
 
 
-export const delUserAction = async (userId: string) => {
+export const delProjectAction = async (projectId: string) => {
   try {
     const token = cookies().get('token')?.value
-    const result = await fetch(`${process.env.NEXT_API_URL}/user/${userId}`, {
+    const result = await fetch(`${process.env.NEXT_API_URL}/project/${projectId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -17,13 +17,13 @@ export const delUserAction = async (userId: string) => {
     })
     const json = await result.json();
     if (result.status === 200) {
-      revalidateTag("getUserList")
-      return resOk("delete user successful")
+      revalidateTag("getProjectList")
+      return resOk("delete project successful")
     } else {
       return resErr(json.error)
     }
   } catch (error) {
     console.error(error)
-    return resErr("delete user failed. Please try again.")
+    return resErr("delete project failed. Please try again.")
   }
 }

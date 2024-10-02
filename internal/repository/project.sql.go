@@ -17,17 +17,23 @@ SET
   is_deleted = $1, 
   updated_at = $2,
   updated_by = $3
-WHERE id = $3
+WHERE id = $4
 `
 
 type DeleteProjectParams struct {
 	IsDeleted pgtype.Bool
 	UpdatedAt pgtype.Timestamp
 	UpdatedBy pgtype.Text
+	ID        string
 }
 
 func (q *Queries) DeleteProject(ctx context.Context, arg DeleteProjectParams) error {
-	_, err := q.db.Exec(ctx, deleteProject, arg.IsDeleted, arg.UpdatedAt, arg.UpdatedBy)
+	_, err := q.db.Exec(ctx, deleteProject,
+		arg.IsDeleted,
+		arg.UpdatedAt,
+		arg.UpdatedBy,
+		arg.ID,
+	)
 	return err
 }
 

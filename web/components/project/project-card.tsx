@@ -1,8 +1,9 @@
 import { z } from "zod"
 import { ProjectSchema } from "@/schemas/project"
 import { Button } from "../ui/button"
-import { Trash2, TvMinimal } from "lucide-react"
+import { TvMinimal } from "lucide-react"
 import { EditProjectButton } from "./edit-project-button"
+import { DelProjectButton } from "./del-project-button"
 
 type Props = {
   project: z.infer<typeof ProjectSchema>
@@ -21,9 +22,7 @@ export const ProjectCard = ({ project }: Props) => {
           <TvMinimal className=" w-[1rem] h-[1rem]" />
         </Button>
         <EditProjectButton project={project} />
-        <Button size="sm" variant="link" className="flex items-center gap-1 mx-0 px-0">
-          <Trash2 className=" w-[1rem] h-[1rem] " />
-        </Button>
+        <DelProjectButton projectId={project.id} />
       </div>
     </div>
   )
