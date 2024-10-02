@@ -52,21 +52,48 @@ func (q *Queries) GetProjectById(ctx context.Context, id string) (Project, error
 }
 
 const getProjectList = `-- name: GetProjectList :many
-SELECT id, name, description, is_deleted, created_by, created_at, updated_by, updated_at 
-FROM projects 
-WHERE name LIKE $1 AND is_deleted = false
-ORDER BY created_at DESC
+SELECT p.id, name, description, p.is_deleted, p.created_by, p.created_at, p.updated_by, p.updated_at, pu.id, user_id, project_id, permission, pu.is_deleted, pu.created_by, pu.created_at, pu.updated_by, pu.updated_at 
+FROM projects AS p 
+JOIN project_users AS pu 
+ON p.id = pu.project_id
+WHERE p.name LIKE $1 AND p.is_deleted = false AND pu.user_id = $2
+ORDER BY p.created_at DESC
 `
 
-func (q *Queries) GetProjectList(ctx context.Context, name string) ([]Project, error) {
-	rows, err := q.db.Query(ctx, getProjectList, name)
+type GetProjectListParams struct {
+	Name   string
+	UserID string
+}
+
+type GetProjectListRow struct {
+	ID          string
+	Name        string
+	Description pgtype.Text
+	IsDeleted   pgtype.Bool
+	CreatedBy   pgtype.Text
+	CreatedAt   pgtype.Timestamp
+	UpdatedBy   pgtype.Text
+	UpdatedAt   pgtype.Timestamp
+	ID_2        string
+	UserID      string
+	ProjectID   string
+	Permission  NullPermissionLevel
+	IsDeleted_2 pgtype.Bool
+	CreatedBy_2 pgtype.Text
+	CreatedAt_2 pgtype.Timestamp
+	UpdatedBy_2 pgtype.Text
+	UpdatedAt_2 pgtype.Timestamp
+}
+
+func (q *Queries) GetProjectList(ctx context.Context, arg GetProjectListParams) ([]GetProjectListRow, error) {
+	rows, err := q.db.Query(ctx, getProjectList, arg.Name, arg.UserID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Project
+	var items []GetProjectListRow
 	for rows.Next() {
-		var i Project
+		var i GetProjectListRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -76,6 +103,15 @@ func (q *Queries) GetProjectList(ctx context.Context, name string) ([]Project, e
 			&i.CreatedAt,
 			&i.UpdatedBy,
 			&i.UpdatedAt,
+			&i.ID_2,
+			&i.UserID,
+			&i.ProjectID,
+			&i.Permission,
+			&i.IsDeleted_2,
+			&i.CreatedBy_2,
+			&i.CreatedAt_2,
+			&i.UpdatedBy_2,
+			&i.UpdatedAt_2,
 		); err != nil {
 			return nil, err
 		}

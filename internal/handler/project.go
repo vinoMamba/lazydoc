@@ -65,9 +65,10 @@ func (h *projectHandler) UpdateProject(c fiber.Ctx) error {
 }
 
 func (h *projectHandler) GetProjectList(c fiber.Ctx) error {
+	userId := GetUserIdFromLocals(c)
 	name := c.Query("name")
 
-	result, err := h.projectService.GetProjectListService(c, name)
+	result, err := h.projectService.GetProjectListService(c, userId, name)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),

@@ -15,7 +15,7 @@ import (
 type ProjectService interface {
 	CreateProjectService(ctx fiber.Ctx, userId string, req *req.CreateProjectReq) error
 	UpdateProjectService(ctx fiber.Ctx, userId string, req *req.UpdateProjectReq) error
-	GetProjectListService(ctx fiber.Ctx, projectName string) ([]*res.ProjectRes, error)
+	GetProjectListService(ctx fiber.Ctx, userId, projectName string) ([]*res.ProjectRes, error)
 }
 
 type projectService struct {
@@ -98,9 +98,12 @@ func (s *projectService) UpdateProjectService(ctx fiber.Ctx, userId string, req 
 	return nil
 }
 
-func (s *projectService) GetProjectListService(ctx fiber.Ctx, projectName string) ([]*res.ProjectRes, error) {
+func (s *projectService) GetProjectListService(ctx fiber.Ctx, userId, projectName string) ([]*res.ProjectRes, error) {
 	name := "%" + projectName + "%"
-	list, err := s.queries.GetProjectList(ctx.Context(), name)
+	list, err := s.queries.GetProjectList(ctx.Context(), repository.GetProjectListParams{
+		Name:   name,
+		UserID: userId,
+	})
 	if err != nil {
 		log.Errorf("[database] get project list error: %v", err)
 		return nil, errors.New("internal server error")
