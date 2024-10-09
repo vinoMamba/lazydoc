@@ -21,3 +21,9 @@ SET
   updated_at = $2,
   updated_by = $3
 WHERE id = $4;
+
+-- name: GetDocListByProjectId :many
+SELECT * FROM documents WHERE project_id = $1 AND parent_id IS NULL AND is_deleted = false;
+
+-- name: GetDocListByParentId :many
+SELECT * FROM documents WHERE parent_id = $1 AND is_deleted = false;

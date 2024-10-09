@@ -37,6 +37,78 @@ func (q *Queries) DeleteDoc(ctx context.Context, arg DeleteDocParams) error {
 	return err
 }
 
+const getDocListByParentId = `-- name: GetDocListByParentId :many
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin FROM documents WHERE parent_id = $1 AND is_deleted = false
+`
+
+func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text) ([]Document, error) {
+	rows, err := q.db.Query(ctx, getDocListByParentId, parentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Document
+	for rows.Next() {
+		var i Document
+		if err := rows.Scan(
+			&i.ID,
+			&i.ParentID,
+			&i.ProjectID,
+			&i.Name,
+			&i.IsFolder,
+			&i.IsDeleted,
+			&i.CreatedBy,
+			&i.CreatedAt,
+			&i.UpdatedBy,
+			&i.UpdatedAt,
+			&i.IsPin,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getDocListByProjectId = `-- name: GetDocListByProjectId :many
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin FROM documents WHERE project_id = $1 AND parent_id IS NULL AND is_deleted = false
+`
+
+func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Text) ([]Document, error) {
+	rows, err := q.db.Query(ctx, getDocListByProjectId, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Document
+	for rows.Next() {
+		var i Document
+		if err := rows.Scan(
+			&i.ID,
+			&i.ParentID,
+			&i.ProjectID,
+			&i.Name,
+			&i.IsFolder,
+			&i.IsDeleted,
+			&i.CreatedBy,
+			&i.CreatedAt,
+			&i.UpdatedBy,
+			&i.UpdatedAt,
+			&i.IsPin,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const insertDoc = `-- name: InsertDoc :exec
 INSERT INTO documents (
   id,parent_id,project_id,name,is_folder,created_at,created_by

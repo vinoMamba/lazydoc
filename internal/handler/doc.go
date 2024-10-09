@@ -9,6 +9,8 @@ import (
 type DocHandler interface {
 	CreateDoc(c fiber.Ctx) error
 	UpdateDoc(c fiber.Ctx) error
+	GetDocList(c fiber.Ctx) error
+	GetDocListByParentId(c fiber.Ctx) error
 }
 
 type docHandler struct {
@@ -64,4 +66,28 @@ func (h *docHandler) UpdateDoc(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ok",
 	})
+}
+
+func (h *docHandler) GetDocList(c fiber.Ctx) error {
+	projectId := c.Query("projectId")
+	result, err := h.docService.GetDocListService(c, projectId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
+
+func (h *docHandler) GetDocListByParentId(c fiber.Ctx) error {
+	parentId := c.Query("parentId")
+	result, err := h.docService.GetDocListByParentIdService(c, parentId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
 }

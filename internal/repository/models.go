@@ -65,6 +65,7 @@ type Document struct {
 	CreatedAt pgtype.Timestamp
 	UpdatedBy pgtype.Text
 	UpdatedAt pgtype.Timestamp
+	IsPin     pgtype.Bool
 }
 
 type Project struct {

@@ -8,12 +8,15 @@ import (
 	"github.com/gofiber/fiber/v3/log"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/vinoMamba/lazydoc/api/req"
+	"github.com/vinoMamba/lazydoc/api/res"
 	"github.com/vinoMamba/lazydoc/internal/repository"
 )
 
 type DocService interface {
 	CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) error
 	UpdateDocService(ctx fiber.Ctx, userId string, req *req.UpdateDocReq) error
+	GetDocListService(ctx fiber.Ctx, projectId string) ([]*res.DocItem, error)
+	GetDocListByParentIdService(ctx fiber.Ctx, parentId string) ([]*res.DocItem, error)
 }
 
 type docService struct {
@@ -68,4 +71,48 @@ func (s *docService) UpdateDocService(ctx fiber.Ctx, userId string, req *req.Upd
 		return errors.New("internal server error")
 	}
 	return nil
+}
+
+func (s *docService) GetDocListService(ctx fiber.Ctx, projectId string) ([]*res.DocItem, error) {
+	list, err := s.queries.GetDocListByProjectId(ctx.Context(), pgtype.Text{String: projectId, Valid: true})
+	if err != nil {
+		log.Errorf("[database] get doc list error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+	var dl []*res.DocItem
+	for _, d := range list {
+		item := &res.DocItem{
+			Id:        d.ID,
+			ParentId:  d.ParentID.String,
+			Name:      d.Name,
+			IsFolder:  d.IsFolder.Bool,
+			IsPin:     d.IsPin.Bool,
+			CreatedAt: d.CreatedAt.Time.Format(time.DateTime),
+			CreatedBy: d.CreatedBy.String,
+		}
+		dl = append(dl, item)
+	}
+	return dl, nil
+}
+
+func (s *docService) GetDocListByParentIdService(ctx fiber.Ctx, parentId string) ([]*res.DocItem, error) {
+	list, err := s.queries.GetDocListByParentId(ctx.Context(), pgtype.Text{String: parentId, Valid: true})
+	if err != nil {
+		log.Errorf("[database] get doc list error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+	var dl []*res.DocItem
+	for _, d := range list {
+		item := &res.DocItem{
+			Id:        d.ID,
+			ParentId:  d.ParentID.String,
+			Name:      d.Name,
+			IsFolder:  d.IsFolder.Bool,
+			IsPin:     d.IsPin.Bool,
+			CreatedAt: d.CreatedAt.Time.Format(time.DateTime),
+			CreatedBy: d.CreatedBy.String,
+		}
+		dl = append(dl, item)
+	}
+	return dl, nil
 }
