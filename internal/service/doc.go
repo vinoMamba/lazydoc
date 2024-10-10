@@ -13,7 +13,7 @@ import (
 )
 
 type DocService interface {
-	CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) error
+	CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) (string, error)
 	UpdateDocService(ctx fiber.Ctx, userId string, req *req.UpdateDocReq) error
 	GetDocListService(ctx fiber.Ctx, projectId string) ([]*res.DocItem, error)
 	GetDocListByParentIdService(ctx fiber.Ctx, parentId string) ([]*res.DocItem, error)
@@ -29,19 +29,19 @@ func NewDocService(service *Service) DocService {
 	}
 }
 
-func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) error {
+func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) (string, error) {
 
 	_, err := s.queries.GetProjectById(ctx.Context(), req.ProjectId)
 	if err != nil {
 		log.Errorf("[database] select project error: %v", err)
-		return errors.New("Current project is not exist")
+		return "", errors.New("Current project is not exist")
 	}
 
 	docId, err := s.sid.GenString()
 
 	if err != nil {
 		log.Errorf("Create doc id error: %v", err)
-		return errors.New("internal server error")
+		return "", errors.New("internal server error")
 	}
 
 	if err := s.queries.InsertDoc(ctx.Context(), repository.InsertDocParams{
@@ -49,14 +49,14 @@ func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.Cre
 		Name:      req.Name,
 		IsFolder:  pgtype.Bool{Bool: req.IsFolder, Valid: true},
 		ProjectID: pgtype.Text{String: req.ProjectId, Valid: true},
-		ParentID:  pgtype.Text{String: req.ProjectId, Valid: true},
+		ParentID:  pgtype.Text{String: req.ParentId, Valid: true},
 		CreatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
 		CreatedBy: pgtype.Text{String: userId, Valid: true},
 	}); err != nil {
 		log.Errorf("[database] create doc error: %v", err)
-		return errors.New("internal server error")
+		return "", errors.New("internal server error")
 	}
-	return nil
+	return docId, nil
 }
 
 func (s *docService) UpdateDocService(ctx fiber.Ctx, userId string, req *req.UpdateDocReq) error {

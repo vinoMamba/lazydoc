@@ -35,15 +35,14 @@ func (h *docHandler) CreateDoc(c fiber.Ctx) error {
 		})
 	}
 
-	if err := h.docService.CreateDocService(c, userId, params); err != nil {
+	docId, err := h.docService.CreateDocService(c, userId, params)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "ok",
-	})
+	return c.Status(fiber.StatusOK).JSON(docId)
 }
 
 func (h *docHandler) UpdateDoc(c fiber.Ctx) error {

@@ -23,7 +23,7 @@ SET
 WHERE id = $4;
 
 -- name: GetDocListByProjectId :many
-SELECT * FROM documents WHERE project_id = $1 AND parent_id IS NULL AND is_deleted = false;
+SELECT * FROM documents WHERE project_id = $1 AND (parent_id IS NULL OR parent_id = '' ) AND is_deleted = false;
 
 -- name: GetDocListByParentId :many
 SELECT * FROM documents WHERE parent_id = $1 AND is_deleted = false;
