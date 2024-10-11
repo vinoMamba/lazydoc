@@ -62,6 +62,8 @@ func NewHttpServer(
 	doc := app.Group("/doc")
 	doc.Use(middleware.JWTMiddleware(jwt))
 	doc.Post("", docHandler.CreateDoc)
+	doc.Put("", docHandler.UpdateDoc)
+	doc.Delete("/:docId", docHandler.DeleteDoc)
 	doc.Get("/list", docHandler.GetDocList)
 	doc.Get("/list_by_parent_id", docHandler.GetDocListByParentId)
 

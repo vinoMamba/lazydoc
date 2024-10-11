@@ -38,7 +38,7 @@ func (q *Queries) DeleteDoc(ctx context.Context, arg DeleteDocParams) error {
 }
 
 const getDocListByParentId = `-- name: GetDocListByParentId :many
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin FROM documents WHERE parent_id = $1 AND is_deleted = false
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE parent_id = $1 AND is_deleted = false
 `
 
 func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text) ([]Document, error) {
@@ -62,6 +62,8 @@ func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text
 			&i.UpdatedBy,
 			&i.UpdatedAt,
 			&i.IsPin,
+			&i.PreDocID,
+			&i.HasChildren,
 		); err != nil {
 			return nil, err
 		}
@@ -74,7 +76,7 @@ func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text
 }
 
 const getDocListByProjectId = `-- name: GetDocListByProjectId :many
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin FROM documents WHERE project_id = $1 AND (parent_id IS NULL OR parent_id = '' ) AND is_deleted = false
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE project_id = $1 AND (parent_id IS NULL OR parent_id = '' ) AND is_deleted = false
 `
 
 func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Text) ([]Document, error) {
@@ -98,6 +100,8 @@ func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Te
 			&i.UpdatedBy,
 			&i.UpdatedAt,
 			&i.IsPin,
+			&i.PreDocID,
+			&i.HasChildren,
 		); err != nil {
 			return nil, err
 		}
@@ -107,6 +111,31 @@ func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Te
 		return nil, err
 	}
 	return items, nil
+}
+
+const getFirstDocByParentId = `-- name: GetFirstDocByParentId :one
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE parent_id = $1 AND (pre_doc_id IS NULL OR pre_doc_id = '' ) AND is_deleted = false
+`
+
+func (q *Queries) GetFirstDocByParentId(ctx context.Context, parentID pgtype.Text) (Document, error) {
+	row := q.db.QueryRow(ctx, getFirstDocByParentId, parentID)
+	var i Document
+	err := row.Scan(
+		&i.ID,
+		&i.ParentID,
+		&i.ProjectID,
+		&i.Name,
+		&i.IsFolder,
+		&i.IsDeleted,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedBy,
+		&i.UpdatedAt,
+		&i.IsPin,
+		&i.PreDocID,
+		&i.HasChildren,
+	)
+	return i, err
 }
 
 const insertDoc = `-- name: InsertDoc :exec
@@ -166,5 +195,20 @@ func (q *Queries) UpdateDoc(ctx context.Context, arg UpdateDocParams) error {
 		arg.UpdatedBy,
 		arg.ID,
 	)
+	return err
+}
+
+const updateDocPreDocId = `-- name: UpdateDocPreDocId :exec
+UPDATE documents 
+SET pre_doc_id = $1 WHERE id = $2
+`
+
+type UpdateDocPreDocIdParams struct {
+	PreDocID pgtype.Text
+	ID       string
+}
+
+func (q *Queries) UpdateDocPreDocId(ctx context.Context, arg UpdateDocPreDocIdParams) error {
+	_, err := q.db.Exec(ctx, updateDocPreDocId, arg.PreDocID, arg.ID)
 	return err
 }

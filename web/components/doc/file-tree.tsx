@@ -1,9 +1,10 @@
 
 import { getDocRootListAction } from "@/action/get-doc-root-list"
 import { Button } from "../ui/button"
-import { File, Folder } from "lucide-react"
+import { FilePlus2, FolderPlus } from "lucide-react"
 import { AddFileButton } from "./add-file-button"
 import { FileItem } from "./file-item"
+import { Separator } from "../ui/separator"
 
 
 
@@ -12,16 +13,17 @@ export const FileTree = async ({ projectId }: { projectId: string }) => {
 
   return (
     <div>
-      <header className="grid grid-cols-2 gap-2 mx-2">
+      <header className=" flex items-center justify-around mx-2">
         <AddFileButton projectId={projectId} >
           <Button variant="ghost" className="flex items-center gap-1 w-full" size="sm">
-            <File className="w-[1rem] h-[1rem]" />
+            <FilePlus2 className="w-[1rem] h-[1rem]" />
             Add File
           </Button>
         </AddFileButton>
+        <Separator orientation="vertical" className="h-4 mx-2" />
         <AddFileButton projectId={projectId} isFolder >
-          <Button variant="ghost" className="flex items-center gap-1" size="sm">
-            <Folder className="w-[1rem] h-[1rem]" />
+          <Button variant="ghost" className="flex items-center gap-1 w-full" size="sm">
+            <FolderPlus className="w-[1rem] h-[1rem]" />
             Add Folder
           </Button>
         </AddFileButton>

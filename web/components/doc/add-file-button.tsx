@@ -21,12 +21,11 @@ export const AddFileButton = ({ projectId, children, isFolder = false }: Props) 
     })
 
     if (code === 200) {
-      console.log(data)
       updateCurrentEditFileId(data)
     }
   }
   return (
-    <div onClick={onClick}>
+    <div onClick={onClick} className="w-full">
       {children}
     </div>
   )

@@ -9,6 +9,7 @@ import (
 type DocHandler interface {
 	CreateDoc(c fiber.Ctx) error
 	UpdateDoc(c fiber.Ctx) error
+	DeleteDoc(c fiber.Ctx) error
 	GetDocList(c fiber.Ctx) error
 	GetDocListByParentId(c fiber.Ctx) error
 }
@@ -57,6 +58,22 @@ func (h *docHandler) UpdateDoc(c fiber.Ctx) error {
 	}
 
 	if err := h.docService.UpdateDocService(c, userId, params); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
+func (h *docHandler) DeleteDoc(c fiber.Ctx) error {
+
+	userId := GetUserIdFromLocals(c)
+	docId := c.Params("docId")
+
+	if err := h.docService.DeleteDocService(c, userId, docId); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})

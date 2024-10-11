@@ -2,11 +2,12 @@
 
 import { DocItemSchema } from "@/schemas/doc"
 import { useFileStore } from "@/store/use-file"
-import { File, FileCode, Folder, PencilLine, Settings2, Trash2 } from "lucide-react"
+import { FileCode, FilePlus2, Folder, FolderPlus, PencilLine, Settings2, Trash2 } from "lucide-react"
 import { z } from "zod"
-import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { AddFileButton } from "./add-file-button"
+import { DeleteFileButton } from "./delete-file-button"
+import { FileInput } from "./file-input"
 
 type Props = {
   file: z.infer<typeof DocItemSchema>
@@ -24,7 +25,7 @@ export const FileItem = ({ file, projectId }: Props) => {
     <>
       {
         currentEditFileId === file.id
-          ? (<Input defaultValue={file.name} autoFocus className="text-sm h-6 rounded-sm" onBlur={() => updateCurrentEditFileId("")} />)
+          ? (<FileInput file={file} />)
           : (
             <div className="flex items-center justify-between text-xs group hover:bg-muted p-2 rounded-sm relative">
               <div className="flex items-center gap-1 ">
@@ -45,23 +46,25 @@ export const FileItem = ({ file, projectId }: Props) => {
                     <>
                       <AddFileButton projectId={projectId} >
                         <DropdownMenuItem className="flex items-center gap-2">
-                          <File className="w-[1rem] h-[1rem]" />
-                          Add File
+                          <FilePlus2 className="w-[1rem] h-[1rem]" />
+                          New file
                         </DropdownMenuItem>
                       </AddFileButton>
                       <AddFileButton projectId={projectId} isFolder>
                         <DropdownMenuItem className="flex items-center gap-2">
-                          <Folder className="w-[1rem] h-[1rem]" />
-                          Add Folder
+                          <FolderPlus className="w-[1rem] h-[1rem]" />
+                          New folder
                         </DropdownMenuItem>
                       </AddFileButton>
 
                     </>
                   )}
-                  <DropdownMenuItem className="flex items-center gap-2">
-                    <Trash2 className="w-[1rem] h-[1rem]" />
-                    Delete
-                  </DropdownMenuItem>
+                  <DeleteFileButton fileId={file.id}>
+                    <DropdownMenuItem className="flex items-center gap-2">
+                      <Trash2 className="w-[1rem] h-[1rem]" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DeleteFileButton>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

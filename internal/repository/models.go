@@ -55,17 +55,19 @@ func (ns NullPermissionLevel) Value() (driver.Value, error) {
 }
 
 type Document struct {
-	ID        string
-	ParentID  pgtype.Text
-	ProjectID pgtype.Text
-	Name      string
-	IsFolder  pgtype.Bool
-	IsDeleted pgtype.Bool
-	CreatedBy pgtype.Text
-	CreatedAt pgtype.Timestamp
-	UpdatedBy pgtype.Text
-	UpdatedAt pgtype.Timestamp
-	IsPin     pgtype.Bool
+	ID          string
+	ParentID    pgtype.Text
+	ProjectID   pgtype.Text
+	Name        string
+	IsFolder    pgtype.Bool
+	IsDeleted   pgtype.Bool
+	CreatedBy   pgtype.Text
+	CreatedAt   pgtype.Timestamp
+	UpdatedBy   pgtype.Text
+	UpdatedAt   pgtype.Timestamp
+	IsPin       pgtype.Bool
+	PreDocID    pgtype.Text
+	HasChildren pgtype.Bool
 }
 
 type Project struct {

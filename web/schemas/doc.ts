@@ -15,7 +15,13 @@ export const DocListSchema = z.array(DocItemSchema)
 
 export const CreateFileSchema = z.object({
   name: z.string(),
-  projectId:z.string(),
+  projectId: z.string(),
   parentId: z.string().optional(),
   isFolder: z.boolean(),
+})
+
+export const UpdateFileSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  parentId: z.string().optional(),
 })
