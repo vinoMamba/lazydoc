@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"errors"
@@ -15,6 +15,7 @@ import (
 	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/api/res"
 	"github.com/vinoMamba/lazydoc/internal/repository"
+	"github.com/vinoMamba/lazydoc/internal/service"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -31,17 +32,17 @@ type UserService interface {
 }
 
 type userService struct {
-	*Service
+	*service.Service
 }
 
-func NewUserService(service *Service) UserService {
+func NewUserService(service *service.Service) UserService {
 	return &userService{
 		Service: service,
 	}
 }
 
 func (s *userService) LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginRes, error) {
-	u, err := s.queries.GetUserByEmail(ctx.Context(), req.Email)
+	u, err := s.Queries.GetUserByEmail(ctx.Context(), req.Email)
 	if err != nil || u.IsDeleted.Bool == true {
 		return nil, errors.New("current email is not registered yet")
 	}
@@ -54,7 +55,7 @@ func (s *userService) LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginR
 		}
 	}
 
-	token, err := s.jwt.GenJWT(u.ID, u.Email)
+	token, err := s.Jwt.GenJWT(u.ID, u.Email)
 
 	if err != nil {
 		log.Errorf("generate jwt error: %v", err)
@@ -67,7 +68,7 @@ func (s *userService) LoginPwd(ctx fiber.Ctx, req *req.LoginPwdReq) (*res.LoginR
 }
 
 func (s *userService) GetUserInfoService(ctx fiber.Ctx, userId string) (*res.UserInfoRes, error) {
-	u, err := s.queries.GetUserById(ctx.Context(), userId)
+	u, err := s.Queries.GetUserById(ctx.Context(), userId)
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
@@ -82,12 +83,12 @@ func (s *userService) GetUserInfoService(ctx fiber.Ctx, userId string) (*res.Use
 }
 
 func (s *userService) AddUserService(ctx fiber.Ctx, uid string, req *req.AddUserReq) error {
-	_, err := s.queries.GetUserByEmail(ctx.Context(), req.Email)
+	_, err := s.Queries.GetUserByEmail(ctx.Context(), req.Email)
 	if err == nil {
 		return errors.New("current email has registered ")
 	}
 
-	userId, err := s.sid.GenString()
+	userId, err := s.Sid.GenString()
 	if err != nil {
 		log.Errorf("[sid] generate userId error: %v", err)
 		return errors.New("internal server error")
@@ -101,7 +102,7 @@ func (s *userService) AddUserService(ctx fiber.Ctx, uid string, req *req.AddUser
 		return errors.New("internal server error")
 	}
 
-	if err := s.queries.InsertUser(ctx.Context(), repository.InsertUserParams{
+	if err := s.Queries.InsertUser(ctx.Context(), repository.InsertUserParams{
 		ID:        userId,
 		Username:  req.Username,
 		Email:     req.Email,
@@ -120,7 +121,7 @@ func (s *userService) GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, c
 	limit := int32(pageSize)
 	offset := int32((pageNum - 1) * pageSize)
 
-	list, err := s.queries.GetUserList(ctx.Context(), repository.GetUserListParams{
+	list, err := s.Queries.GetUserList(ctx.Context(), repository.GetUserListParams{
 		Username: "%" + condition + "%",
 		Email:    "%" + condition + "%",
 		Limit:    limit,
@@ -146,7 +147,7 @@ func (s *userService) GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, c
 		items = append(items, i)
 	}
 
-	count, err := s.queries.GetUserListCount(ctx.Context(), repository.GetUserListCountParams{
+	count, err := s.Queries.GetUserListCount(ctx.Context(), repository.GetUserListCountParams{
 		Username: "%" + condition + "%",
 		Email:    "%" + condition + "%",
 	})
@@ -168,7 +169,7 @@ func (s *userService) GetUserListService(ctx fiber.Ctx, pageSize, pageNum int, c
 
 func (s *userService) DeleteUserService(ctx fiber.Ctx, userId string) error {
 
-	if err := s.queries.DeleteUserById(ctx.Context(), userId); err != nil {
+	if err := s.Queries.DeleteUserById(ctx.Context(), userId); err != nil {
 		log.Errorf("[database] delete user error: %v", err)
 		return errors.New("internal server error")
 	}
@@ -197,14 +198,14 @@ func (s *userService) UpdateUserAvatarService(ctx fiber.Ctx, file *multipart.Fil
 	}
 
 	fileName := fmt.Sprintf("%s_%s_%s", userId, strconv.FormatInt(time.Now().Unix(), 10), file.Filename)
-	filePath := s.config.GetString("asset.icon_file_path") + fileName
+	filePath := s.Config.GetString("asset.icon_file_path") + fileName
 
 	params := repository.UpdateAvatarByIdParams{
 		Avatar:    pgtype.Text{Valid: true, String: fileName},
 		ID:        userId,
 		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
 	}
-	if err := s.queries.UpdateAvatarById(ctx.Context(), params); err != nil {
+	if err := s.Queries.UpdateAvatarById(ctx.Context(), params); err != nil {
 		log.Errorf("[database] upload avatar error: &v", err)
 		return errors.New("internal server error")
 	}
@@ -214,7 +215,7 @@ func (s *userService) UpdateUserAvatarService(ctx fiber.Ctx, file *multipart.Fil
 
 func (s *userService) UpdateUsernameService(ctx fiber.Ctx, userId, username string) error {
 
-	if err := s.queries.UpdateUsernameById(ctx.Context(), repository.UpdateUsernameByIdParams{
+	if err := s.Queries.UpdateUsernameById(ctx.Context(), repository.UpdateUsernameByIdParams{
 		Username:  username,
 		ID:        userId,
 		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
@@ -226,7 +227,7 @@ func (s *userService) UpdateUsernameService(ctx fiber.Ctx, userId, username stri
 }
 
 func (s *userService) UpdateUserPasswordService(ctx fiber.Ctx, userId string, req *req.UpdateUserPasswordReq) error {
-	u, err := s.queries.GetUserById(ctx.Context(), userId)
+	u, err := s.Queries.GetUserById(ctx.Context(), userId)
 	if err != nil {
 		return errors.New("Can't find user")
 	}
@@ -242,7 +243,7 @@ func (s *userService) UpdateUserPasswordService(ctx fiber.Ctx, userId string, re
 		return errors.New("internal server error")
 	}
 
-	if err := s.queries.UpdatePasswordById(ctx.Context(), repository.UpdatePasswordByIdParams{
+	if err := s.Queries.UpdatePasswordById(ctx.Context(), repository.UpdatePasswordByIdParams{
 		Password:  string(hashedPassword),
 		ID:        userId,
 		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
@@ -256,12 +257,12 @@ func (s *userService) UpdateUserPasswordService(ctx fiber.Ctx, userId string, re
 
 func (s *userService) UpdateUserEmailService(ctx fiber.Ctx, userId string, req *req.UpdateUserEmailReq) error {
 
-	u, err := s.queries.GetUserByEmail(ctx.Context(), req.Email)
+	u, err := s.Queries.GetUserByEmail(ctx.Context(), req.Email)
 	if err == nil && u.IsDeleted.Bool == true {
 		return errors.New("current email has registered")
 	}
 
-	if err := s.queries.UpdateEmailById(ctx.Context(), repository.UpdateEmailByIdParams{
+	if err := s.Queries.UpdateEmailById(ctx.Context(), repository.UpdateEmailByIdParams{
 		Email:     req.Email,
 		ID:        userId,
 		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},

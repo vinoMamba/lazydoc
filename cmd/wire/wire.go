@@ -11,6 +11,9 @@ import (
 	"github.com/vinoMamba/lazydoc/internal/repository"
 	"github.com/vinoMamba/lazydoc/internal/server"
 	"github.com/vinoMamba/lazydoc/internal/service"
+	"github.com/vinoMamba/lazydoc/internal/service/doc"
+	"github.com/vinoMamba/lazydoc/internal/service/project"
+	"github.com/vinoMamba/lazydoc/internal/service/user"
 	"github.com/vinoMamba/lazydoc/pkg/jwt"
 	"github.com/vinoMamba/lazydoc/pkg/mail"
 	"github.com/vinoMamba/lazydoc/pkg/redis"
@@ -29,9 +32,9 @@ var handlerSet = wire.NewSet(
 
 var serviceSet = wire.NewSet(
 	service.NewService,
-	service.NewUserService,
-	service.NewProjectService,
-	service.NewDocService,
+	user.NewUserService,
+	project.NewProjectService,
+	doc.NewDocService,
 
 	repository.New,
 	repository.NewConn,

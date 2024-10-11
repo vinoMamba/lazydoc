@@ -10,22 +10,22 @@ import (
 )
 
 type Service struct {
-	queries *repository.Queries
-	sid     *sid.Sid
-	jwt     *jwt.JWT
-	config  *viper.Viper
-	mail    *mail.Mail
-	redis   *redis.RedisInternal
+	Queries *repository.Queries
+	Sid     *sid.Sid
+	Jwt     *jwt.JWT
+	Config  *viper.Viper
+	Mail    *mail.Mail
+	Redis   *redis.RedisInternal
 }
 
 func NewService(queries *repository.Queries, sid *sid.Sid, jwt *jwt.JWT, config *viper.Viper, mail *mail.Mail, redis *redis.RedisInternal) *Service {
 
 	return &Service{
-		queries: queries,
-		sid:     sid,
-		jwt:     jwt,
-		config:  config,
-		mail:    mail,
-		redis:   redis,
+		Queries: queries,
+		Sid:     sid,
+		Jwt:     jwt,
+		Config:  config,
+		Mail:    mail,
+		Redis:   redis,
 	}
 }

@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/vinoMamba/lazydoc/api/req"
-	"github.com/vinoMamba/lazydoc/internal/service"
+	"github.com/vinoMamba/lazydoc/internal/service/project"
 )
 
 type ProjectHandler interface {
@@ -15,10 +15,10 @@ type ProjectHandler interface {
 }
 
 type projectHandler struct {
-	projectService service.ProjectService
+	projectService project.ProjectService
 }
 
-func NewProjectHandler(projectService service.ProjectService) ProjectHandler {
+func NewProjectHandler(projectService project.ProjectService) ProjectHandler {
 	return &projectHandler{
 		projectService: projectService,
 	}

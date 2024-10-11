@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/vinoMamba/lazydoc/api/req"
-	"github.com/vinoMamba/lazydoc/internal/service"
+	"github.com/vinoMamba/lazydoc/internal/service/doc"
 )
 
 type DocHandler interface {
@@ -15,10 +15,10 @@ type DocHandler interface {
 }
 
 type docHandler struct {
-	docService service.DocService
+	docService doc.DocService
 }
 
-func NewDocHandler(docService service.DocService) DocHandler {
+func NewDocHandler(docService doc.DocService) DocHandler {
 	return &docHandler{
 		docService: docService,
 	}

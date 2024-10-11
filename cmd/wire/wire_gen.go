@@ -14,6 +14,9 @@ import (
 	"github.com/vinoMamba/lazydoc/internal/repository"
 	"github.com/vinoMamba/lazydoc/internal/server"
 	"github.com/vinoMamba/lazydoc/internal/service"
+	"github.com/vinoMamba/lazydoc/internal/service/doc"
+	"github.com/vinoMamba/lazydoc/internal/service/project"
+	"github.com/vinoMamba/lazydoc/internal/service/user"
 	"github.com/vinoMamba/lazydoc/pkg/jwt"
 	"github.com/vinoMamba/lazydoc/pkg/mail"
 	"github.com/vinoMamba/lazydoc/pkg/redis"
@@ -30,11 +33,11 @@ func NewApp(viperViper *viper.Viper) (*fiber.App, func(), error) {
 	mailMail := mail.NewMail(viperViper)
 	redisInternal := redis.NewRedisConn(viperViper)
 	serviceService := service.NewService(queries, sidSid, jwtJWT, viperViper, mailMail, redisInternal)
-	userService := service.NewUserService(serviceService)
+	userService := user.NewUserService(serviceService)
 	userHandler := handler.NewUserHandler(userService)
-	projectService := service.NewProjectService(serviceService)
+	projectService := project.NewProjectService(serviceService)
 	projectHandler := handler.NewProjectHandler(projectService)
-	docService := service.NewDocService(serviceService)
+	docService := doc.NewDocService(serviceService)
 	docHandler := handler.NewDocHandler(docService)
 	app := server.NewHttpServer(userHandler, projectHandler, docHandler, jwtJWT)
 	return app, func() {
@@ -47,4 +50,4 @@ var serverSet = wire.NewSet(server.NewHttpServer)
 
 var handlerSet = wire.NewSet(handler.NewUserHandler, handler.NewProjectHandler, handler.NewDocHandler)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewProjectService, service.NewDocService, repository.New, repository.NewConn, redis.NewRedisConn)
+var serviceSet = wire.NewSet(service.NewService, user.NewUserService, project.NewProjectService, doc.NewDocService, repository.New, repository.NewConn, redis.NewRedisConn)

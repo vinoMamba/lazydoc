@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/labstack/gommon/log"
 	"github.com/vinoMamba/lazydoc/api/req"
-	"github.com/vinoMamba/lazydoc/internal/service"
+	"github.com/vinoMamba/lazydoc/internal/service/user"
 )
 
 type UserHandler interface {
@@ -22,10 +22,10 @@ type UserHandler interface {
 }
 
 type userHandler struct {
-	userService service.UserService
+	userService user.UserService
 }
 
-func NewUserHandler(userService service.UserService) UserHandler {
+func NewUserHandler(userService user.UserService) UserHandler {
 	return &userHandler{
 		userService: userService,
 	}
