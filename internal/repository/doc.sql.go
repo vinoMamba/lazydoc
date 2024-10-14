@@ -37,6 +37,56 @@ func (q *Queries) DeleteDoc(ctx context.Context, arg DeleteDocParams) error {
 	return err
 }
 
+const getDocById = `-- name: GetDocById :one
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE id = $1 AND is_deleted = false
+`
+
+func (q *Queries) GetDocById(ctx context.Context, id string) (Document, error) {
+	row := q.db.QueryRow(ctx, getDocById, id)
+	var i Document
+	err := row.Scan(
+		&i.ID,
+		&i.ParentID,
+		&i.ProjectID,
+		&i.Name,
+		&i.IsFolder,
+		&i.IsDeleted,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedBy,
+		&i.UpdatedAt,
+		&i.IsPin,
+		&i.PreDocID,
+		&i.HasChildren,
+	)
+	return i, err
+}
+
+const getDocByPreDocId = `-- name: GetDocByPreDocId :one
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE pre_doc_id = $1 AND is_deleted = false
+`
+
+func (q *Queries) GetDocByPreDocId(ctx context.Context, preDocID pgtype.Text) (Document, error) {
+	row := q.db.QueryRow(ctx, getDocByPreDocId, preDocID)
+	var i Document
+	err := row.Scan(
+		&i.ID,
+		&i.ParentID,
+		&i.ProjectID,
+		&i.Name,
+		&i.IsFolder,
+		&i.IsDeleted,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedBy,
+		&i.UpdatedAt,
+		&i.IsPin,
+		&i.PreDocID,
+		&i.HasChildren,
+	)
+	return i, err
+}
+
 const getDocListByParentId = `-- name: GetDocListByParentId :many
 SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE parent_id = $1 AND is_deleted = false
 `

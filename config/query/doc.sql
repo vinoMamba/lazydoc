@@ -34,3 +34,9 @@ SELECT * FROM documents WHERE parent_id = $1 AND (pre_doc_id IS NULL OR pre_doc_
 
 -- name: GetDocListByParentId :many
 SELECT * FROM documents WHERE parent_id = $1 AND is_deleted = false;
+
+
+-- name: GetDocById :one
+SELECT * FROM documents WHERE id = $1 AND is_deleted = false;
+-- name: GetDocByPreDocId :one
+SELECT * FROM documents WHERE pre_doc_id = $1 AND is_deleted = false;
