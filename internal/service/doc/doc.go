@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/labstack/gommon/log"
 	"github.com/vinoMamba/lazydoc/api/req"
 	"github.com/vinoMamba/lazydoc/api/res"
 	"github.com/vinoMamba/lazydoc/internal/repository"
@@ -38,9 +37,6 @@ func sortDocListByPreDocId(list []repository.Document) []*res.DocItem {
 			idMap[item.PreDocID.String] = &item
 		}
 	}
-
-	log.Infof("map:%v", idMap)
-
 	for _, item := range list {
 		if item.PreDocID.String == "" {
 			current := &res.DocItem{
