@@ -2,22 +2,25 @@
 
 import { createFileAction } from "@/action/create-file"
 import { useFileStore } from "@/store/use-file"
-import { ReactNode } from "react"
+import { MouseEventHandler, ReactNode } from "react"
 
 type Props = {
   projectId: string
+  parentId?: string
   isFolder?: boolean
   children: ReactNode
 }
 
-export const AddFileButton = ({ projectId, children, isFolder = false }: Props) => {
+export const AddFileButton = ({ projectId, children, isFolder = false, parentId }: Props) => {
   const updateCurrentEditFileId = useFileStore(s => s.updateCurrentEditFileId)
 
-  const onClick = async () => {
+  const onClick: MouseEventHandler<HTMLDivElement> = async (e) => {
+    e.stopPropagation()
     const { code, data } = await createFileAction({
       name: isFolder ? '新建文件夹' : '新建文件',
       projectId,
-      isFolder
+      isFolder,
+      parentId
     })
 
     if (code === 200) {

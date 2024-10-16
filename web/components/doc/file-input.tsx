@@ -24,7 +24,8 @@ export const FileInput = ({ file }: Props) => {
     if (inputValue !== file.name) {
       await updateFileAction({
         id: file.id,
-        name: inputValue
+        name: inputValue,
+        parentId:file.parentId
       })
 
       updateCurrentEditFileId('')

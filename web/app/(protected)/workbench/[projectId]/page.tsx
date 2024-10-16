@@ -1,3 +1,7 @@
-export default function ProjectPage({ params }: { params: { projectId: string } }) {
-  return <div>{params.projectId}</div>
+export default function ProjectPage() {
+  return (
+    <main className="flex items-center justify-center h-full">
+      Please select one document
+    </main>
+  )
 }

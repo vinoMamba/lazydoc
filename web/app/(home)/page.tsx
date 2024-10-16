@@ -1,7 +1,6 @@
 import { HomeNav } from "@/components/home-nav";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import GradualSpacing from "@/components/ui/gradual-spacing";
 import GridPattern from "@/components/ui/grid-pattern";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import SparklesText from "@/components/ui/sparkles-text";
@@ -25,7 +24,7 @@ export default function Home() {
       </header>
       <section className="max-w-screen-lg mx-auto pt-16 px-4 relative h-full">
         <div className="flex flex-col items-center md:items-start w-full">
-          <SparklesText text="Lazy Doc" className="opacity-80 hover:opacity-100 transition-opacity"/>
+          <SparklesText text="Lazy Doc" className="opacity-80 hover:opacity-100 transition-opacity" />
           <p className="text-xl mt-4 text-center md:text-left px-4 md:px-0 italic opacity-50 hover:opacity-100 transition-opacity">
             {sitConfig.description}
           </p>

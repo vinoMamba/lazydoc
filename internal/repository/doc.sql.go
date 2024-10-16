@@ -126,7 +126,7 @@ func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text
 }
 
 const getDocListByProjectId = `-- name: GetDocListByProjectId :many
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE project_id = $1 AND (parent_id IS NULL OR parent_id = '' ) AND is_deleted = false
+SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE project_id = $1 AND is_deleted = false
 `
 
 func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Text) ([]Document, error) {

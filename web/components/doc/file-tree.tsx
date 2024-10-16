@@ -1,15 +1,15 @@
 
-import { getDocRootListAction } from "@/action/get-doc-root-list"
-import { Button } from "../ui/button"
+import { getDocList } from "@/action/get-doc-list"
+import { Button } from "@/components/ui/button"
 import { FilePlus2, FolderPlus } from "lucide-react"
 import { AddFileButton } from "./add-file-button"
 import { FileItem } from "./file-item"
-import { Separator } from "../ui/separator"
+import { Separator } from "@/components/ui/separator"
 
 
 
 export const FileTree = async ({ projectId }: { projectId: string }) => {
-  const list = await getDocRootListAction({ projectId })
+  const list = await getDocList({ projectId })
 
   return (
     <div>
@@ -21,7 +21,7 @@ export const FileTree = async ({ projectId }: { projectId: string }) => {
           </Button>
         </AddFileButton>
         <Separator orientation="vertical" className="h-4 mx-2" />
-        <AddFileButton projectId={projectId} isFolder >
+        <AddFileButton projectId={projectId} isFolder>
           <Button variant="ghost" className="flex items-center gap-1 w-full" size="sm">
             <FolderPlus className="w-[1rem] h-[1rem]" />
             Add Folder
@@ -31,7 +31,11 @@ export const FileTree = async ({ projectId }: { projectId: string }) => {
       <div className="mx-2 my-2 space-y-1">
         {
           list.map(file => (
-            <FileItem projectId={projectId} file={file} key={file.id} />
+            <FileItem
+              projectId={projectId}
+              file={file}
+              key={file.id}
+            />
           ))
         }
       </div>

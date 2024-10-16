@@ -1,13 +1,22 @@
 import { z } from "zod";
 
-export const DocItemSchema = z.object({
+export const BasicDocItemSchema = z.object({
   id: z.string(),
   parentId: z.string().optional(),
+  preDocId: z.string().optional(),
   name: z.string(),
   isFolder: z.boolean(),
   isPin: z.boolean(),
+  hasChildren: z.boolean(),
   createdBy: z.string().optional(),
   createdAt: z.string().optional(),
+})
+type DocItemType = z.infer<typeof BasicDocItemSchema> & {
+  children: DocItemType[];
+};
+
+export const DocItemSchema: z.ZodType<DocItemType> = BasicDocItemSchema.extend({
+  children: z.lazy(() => DocItemSchema.array())
 })
 
 export const DocListSchema = z.array(DocItemSchema)

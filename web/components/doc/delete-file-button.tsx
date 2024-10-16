@@ -1,7 +1,7 @@
 "use client"
 
 import { delFileAction } from "@/action/del-file"
-import { ReactNode } from "react"
+import { MouseEventHandler, ReactNode } from "react"
 
 type Props = {
   fileId: string
@@ -9,7 +9,8 @@ type Props = {
 }
 
 export const DeleteFileButton = ({ fileId, children }: Props) => {
-  const onClick = () => {
+  const onClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation()
     delFileAction(fileId)
   }
   return (
