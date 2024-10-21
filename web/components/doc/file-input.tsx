@@ -1,43 +1,38 @@
 "use client"
 
-import { z } from "zod"
 import { Input } from "../ui/input"
-import { DocItemSchema } from "@/schemas/doc"
-import { useFileStore } from "@/store/use-file"
+import { DocItemType } from "@/schemas/doc"
 import { useEffect, useState } from "react"
 import { updateFileAction } from "@/action/update-file"
+import { NodeApi } from "react-arborist"
 
 type Props = {
-  file: z.infer<typeof DocItemSchema>
+  node: NodeApi<DocItemType>
 }
 
-export const FileInput = ({ file }: Props) => {
+export const FileInput = ({ node }: Props) => {
   const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
-    setInputValue(file.name)
-  }, [file.name])
-
-  const updateCurrentEditFileId = useFileStore(s => s.updateCurrentEditFileId)
+    setInputValue(node.data.name)
+  }, [node.data.name])
 
   const handleBlur = async () => {
-    if (inputValue !== file.name) {
+    if (inputValue !== node.data.name) {
       await updateFileAction({
-        id: file.id,
+        id: node.data.id,
         name: inputValue,
-        parentId:file.parentId
+        parentId: node.data.parentId
       })
-
-      updateCurrentEditFileId('')
+      node.submit(inputValue)
     } else {
-
-      updateCurrentEditFileId('')
+      node.submit(inputValue)
     }
   }
 
   return (
     <Input
-      defaultValue={file.name}
+      defaultValue={node.data.name}
       autoFocus
       onChange={e => setInputValue(e.target.value)}
       className="text-sm h-8 rounded-sm"

@@ -11,7 +11,8 @@ export const BasicDocItemSchema = z.object({
   createdBy: z.string().optional(),
   createdAt: z.string().optional(),
 })
-type DocItemType = z.infer<typeof BasicDocItemSchema> & {
+
+export type DocItemType = z.infer<typeof BasicDocItemSchema> & {
   children: DocItemType[];
 };
 

@@ -20,7 +20,7 @@ export const updateFileAction = async (value: z.infer<typeof UpdateFileSchema>) 
     })
     const json = await result.json();
     if (result.status === 200) {
-      revalidateTag("getDocRootList")
+      revalidateTag("getDocList")
       return resOk("update file successful")
     } else {
       return resErr(json.error)

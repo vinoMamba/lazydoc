@@ -15,7 +15,7 @@ export const getDocList = async ({ projectId = '' }: { projectId: string }) => {
         'Authorization': `Bearer ${token}`
       },
       next: {
-        tags: ['getDocRootList']
+        tags: ['getDocList']
       }
     })
 

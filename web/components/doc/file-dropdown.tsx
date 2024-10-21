@@ -2,24 +2,22 @@
 
 import { FilePlus2, FolderPlus, PencilLine, Settings2, Trash2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { DocItemSchema } from "@/schemas/doc"
+import { DocItemType } from "@/schemas/doc"
 import { AddFileButton } from "./add-file-button"
-import { useFileStore } from "@/store/use-file"
-import { z } from "zod"
 import { DeleteFileButton } from "./delete-file-button"
 import { MouseEventHandler } from "react"
+import { NodeApi } from "react-arborist"
 
 type Props = {
-  file: z.infer<typeof DocItemSchema>
+  node: NodeApi<DocItemType>
   projectId: string
 }
 
-export const FileItemDorpDown = ({ file, projectId }: Props) => {
-  const updateCurrentEditFileId = useFileStore(s => s.updateCurrentEditFileId)
+export const FileItemDorpDown = ({ node, projectId }: Props) => {
 
   const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation()
-    updateCurrentEditFileId(file.id)
+    node.edit()
   }
   return (
     <>
@@ -33,15 +31,15 @@ export const FileItemDorpDown = ({ file, projectId }: Props) => {
             Rename
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {file.isFolder && (
+          {node.data.isFolder && (
             <>
-              <AddFileButton projectId={projectId} parentId={file.id}>
+              <AddFileButton projectId={projectId} parentId={node.data.id}>
                 <DropdownMenuItem className="flex items-center gap-2">
                   <FilePlus2 className="w-[1rem] h-[1rem]" />
                   New file
                 </DropdownMenuItem>
               </AddFileButton>
-              <AddFileButton projectId={projectId} isFolder parentId={file.id}>
+              <AddFileButton projectId={projectId} isFolder parentId={node.data.id}>
                 <DropdownMenuItem className="flex items-center gap-2">
                   <FolderPlus className="w-[1rem] h-[1rem]" />
                   New folder
@@ -50,7 +48,7 @@ export const FileItemDorpDown = ({ file, projectId }: Props) => {
 
             </>
           )}
-          <DeleteFileButton fileId={file.id}>
+          <DeleteFileButton fileId={node.data.id}>
             <DropdownMenuItem className="flex items-center gap-2">
               <Trash2 className="w-[1rem] h-[1rem]" />
               Delete

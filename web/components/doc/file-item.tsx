@@ -1,38 +1,38 @@
 "use client"
+
 import { cn } from "@/lib/utils"
-import { DocItemSchema } from "@/schemas/doc"
-import { z } from "zod"
-import { FileItemDorpDown } from "./file-dropdown"
-import { usePathname, useRouter } from "next/navigation"
+import { DocItemType } from "@/schemas/doc"
+import { FileCode, Folder, FolderOpen } from "lucide-react"
+import { MouseEvent } from "react"
+import { NodeApi } from "react-arborist"
+import { FileInput } from "./file-input"
 
 type Props = {
-  file: z.infer<typeof DocItemSchema>
-  projectId: string
+  node: NodeApi<DocItemType>
+  propjectId: string
 }
 
-export const FileItem = ({ file, projectId }: Props) => {
-  const router = useRouter()
-  const pathname = usePathname()
-  const handleClick = () => {
-    router.push(`/workbench/${projectId}/${file.id}`)
+export const FileItem = ({ node, propjectId }: Props) => {
+  const handleIconClick = (e: MouseEvent<SVGSVGElement>) => {
+    e.stopPropagation()
+    node.toggle()
   }
-
-
   return (
-    <div>
-      <div
-        onClick={handleClick}
-        className={cn("w-full hover:bg-muted flex justify-between text-xs p-2 rounded-sm group relative cursor-pointer", pathname.split("/")[3] === file.id && "bg-muted")}>
-        {file.name}
-        <FileItemDorpDown file={file} projectId={projectId} />
-      </div>
-      {file.children && file.children.length > 0 && (
-        <div>
-          {file.children.map(child => (
-            <FileItem key={child.id} file={child} projectId={projectId} />
-          ))}
-        </div>
+    <div
+      className={cn(
+        "pl-2 flex items-center gap-1 w-full p-2",
       )}
+    >
+      {
+        node.data.isFolder
+          ? node.isClosed
+            ? <Folder className="w-[1rem] h-[1rem]" onClick={(e) => handleIconClick(e)} />
+            : <FolderOpen className="w-[1rem] h-[1rem]" onClick={(e) => handleIconClick(e)} />
+          : <FileCode className="w-[1rem] h-[1rem]" />
+      }
+      {node.isEditing
+        ? <FileInput node={node} />
+        : <span>{node.data.name}</span>}
     </div>
   )
 }

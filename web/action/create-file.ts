@@ -21,7 +21,7 @@ export const createFileAction = async (value: z.infer<typeof CreateFileSchema>) 
     })
     const json = await result.json();
     if (result.status === 200) {
-      revalidateTag("getDocRootList")
+      revalidateTag("getDocList")
       return resOk("create file successful", json)
     } else {
       return resErr(json.error)
