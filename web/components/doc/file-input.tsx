@@ -2,7 +2,7 @@
 
 import { Input } from "../ui/input"
 import { DocItemType } from "@/schemas/doc"
-import { useEffect, useState } from "react"
+import { KeyboardEvent, useEffect, useState } from "react"
 import { updateFileAction } from "@/action/update-file"
 import { NodeApi } from "react-arborist"
 
@@ -24,15 +24,21 @@ export const FileInput = ({ node }: Props) => {
         name: inputValue,
         parentId: node.data.parentId
       })
-      node.submit(inputValue)
-    } else {
-      node.submit(inputValue)
+    }
+    node.submit(inputValue)
+  }
+
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === 'Enter') {
+      e.preventDefault()
+      handleBlur()
     }
   }
 
   return (
     <Input
       defaultValue={node.data.name}
+      onKeyDown={handleOnKeyDown}
       autoFocus
       onChange={e => setInputValue(e.target.value)}
       className="text-sm h-8 rounded-sm"

@@ -8,16 +8,16 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/gommon/log"
 	"github.com/vinoMamba/lazydoc/api/req"
+	"github.com/vinoMamba/lazydoc/api/res"
 	"github.com/vinoMamba/lazydoc/internal/repository"
 )
 
 // NOTE:  新增文件会添加到当前parentID 的children 的第一个。因此会更新旧的第一个节点的pre_doc_id 为当前新节点的id
-
-func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) (string, error) {
+func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) (*res.DocItem, error) {
 
 	tx, err := s.Queries.NewDB().Begin(ctx.Context())
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	defer tx.Rollback(ctx.Context())
@@ -27,7 +27,7 @@ func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.Cre
 
 	if err != nil {
 		log.Errorf("Create doc id error: %v", err)
-		return "", errors.New("internal server error")
+		return nil, errors.New("internal server error")
 	}
 
 	if err := qtx.InsertDoc(ctx.Context(), repository.InsertDocParams{
@@ -40,14 +40,14 @@ func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.Cre
 		CreatedBy: pgtype.Text{String: userId, Valid: true},
 	}); err != nil {
 		log.Errorf("[database] create doc error: %v", err)
-		return "", errors.New("internal server error")
+		return nil, errors.New("internal server error")
 	}
 
 	first, err := qtx.GetFirstDocByParentId(ctx.Context(), pgtype.Text{String: req.ParentId, Valid: true})
 
 	if err != nil {
 		log.Errorf("[database] get first doc by parent id error: %v", err)
-		return "", errors.New("internal server error")
+		return nil, errors.New("internal server error")
 	}
 
 	if first.ID != docId {
@@ -56,9 +56,25 @@ func (s *docService) CreateDocService(ctx fiber.Ctx, userId string, req *req.Cre
 			PreDocID: pgtype.Text{String: docId, Valid: true},
 		}); err != nil {
 			log.Errorf("[database] update doc pre doc id error: %v", err)
-			return "", errors.New("internal server error")
+			return nil, errors.New("internal server error")
 		}
 	}
 
-	return docId, tx.Commit(ctx.Context())
+	docItem, err := qtx.GetDocById(ctx.Context(), docId)
+	if err != nil {
+		log.Errorf("[database] get doc error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+
+	return &res.DocItem{
+		Id:          docItem.ID,
+		Name:        docItem.Name,
+		ParentId:    docItem.ParentID.String,
+		PreDocId:    docItem.PreDocID.String,
+		IsFolder:    docItem.IsFolder.Bool,
+		IsPin:       docItem.IsPin.Bool,
+		HasChildren: docItem.HasChildren.Bool,
+		CreatedAt:   docItem.CreatedAt.Time.Format(time.DateTime),
+		CreatedBy:   docItem.CreatedBy.String,
+	}, tx.Commit(ctx.Context())
 }

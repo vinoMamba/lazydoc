@@ -12,7 +12,7 @@ type Props = {
   propjectId: string
 }
 
-export const FileItem = ({ node, propjectId }: Props) => {
+export const FileItem = ({ node }: Props) => {
   const handleIconClick = (e: MouseEvent<SVGSVGElement>) => {
     e.stopPropagation()
     node.toggle()
