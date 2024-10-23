@@ -58,12 +58,11 @@ export const FileTree = ({ projectId, list, className }: Props) => {
       <div className="mx-2 my-2 flex-grow" ref={ref}>
         <Tree
           ref={treeRef}
-          initialData={list}
+          data={list}
           height={height}
           width={240}
           rowHeight={40}
           openByDefault={false}
-          renderCursor={({ top }) => <div>111{top}</div>}
         >
           {({ node, style, dragHandle }) => (
             <div

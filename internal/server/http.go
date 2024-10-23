@@ -61,11 +61,11 @@ func NewHttpServer(
 
 	doc := app.Group("/doc")
 	doc.Use(middleware.JWTMiddleware(jwt))
-	doc.Get("/:docId", docHandler.GetDoc)
+	doc.Get("", docHandler.GetDoc)
+	doc.Get("/list", docHandler.GetDocList)
 	doc.Post("", docHandler.CreateDoc)
 	doc.Put("", docHandler.UpdateDoc)
 	doc.Delete("/:docId", docHandler.DeleteDoc)
-	doc.Get("/list", docHandler.GetDocList)
 
 	app.Use(middleware.NotFound())
 	return app

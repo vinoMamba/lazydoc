@@ -25,7 +25,7 @@ func NewDocHandler(docService doc.DocService) DocHandler {
 }
 
 func (h *docHandler) GetDoc(c fiber.Ctx) error {
-	docId := c.Params("docId")
+	docId := c.Query("docId")
 
 	docItem, err := h.docService.GetDocService(c, docId)
 	if err != nil {

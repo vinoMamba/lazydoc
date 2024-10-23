@@ -13,7 +13,7 @@ import (
 func (s *docService) GetDocService(ctx fiber.Ctx, docId string) (*res.DocItem, error) {
 	item, err := s.Queries.GetDocById(ctx.Context(), docId)
 	if err != nil {
-		log.Errorf("[database] get doc list error: %v", err)
+		log.Errorf("[database] get doc error: %v", err)
 		return nil, errors.New("internal server error")
 	}
 
@@ -25,6 +25,7 @@ func (s *docService) GetDocService(ctx fiber.Ctx, docId string) (*res.DocItem, e
 		IsFolder:    item.IsFolder.Bool,
 		IsPin:       item.IsPin.Bool,
 		HasChildren: item.HasChildren.Bool,
+		Children:    []*res.DocItem{},
 		CreatedAt:   item.CreatedAt.Time.Format(time.DateOnly),
 		CreatedBy:   item.CreatedBy.String,
 	}, nil

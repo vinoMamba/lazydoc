@@ -8,7 +8,7 @@ export default async function ProjectLayout({ children, params }: { children: Re
     <main className="flex gap-2 h-full">
       <aside className="flex-col w-64 hidden md:flex sm:flex border-r shrink-0">
         <ProjectInfo projectId={params.projectId} />
-        <FileTree list={list} projectId={params.projectId} className="flex-1"/>
+        <FileTree list={list} projectId={params.projectId} className="flex-1" />
       </aside>
       <div className="w-full h-full">
         <header className="md:hidden sm:hidden block">
