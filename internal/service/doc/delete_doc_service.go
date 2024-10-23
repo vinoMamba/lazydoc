@@ -11,11 +11,11 @@ import (
 )
 
 func (s *docService) DeleteDocService(ctx fiber.Ctx, userId, docId string) error {
-
 	tx, err := s.Queries.NewDB().Begin(ctx.Context())
 	if err != nil {
 		return err
 	}
+
 	defer tx.Rollback(ctx.Context())
 	qtx := s.Queries.WithTx(tx)
 

@@ -23,8 +23,8 @@ func buildTree(itemMap map[string][]*res.DocItem) []*res.DocItem {
 		assembleChildren(root, itemMap)
 		result = append(result, root)
 	}
-	sortListByPreNodeId(result)
-	return result
+	sortResult := sortListByPreNodeId(result)
+	return sortResult
 }
 
 func assembleChildren(parent *res.DocItem, treeMap map[string][]*res.DocItem) {
@@ -36,6 +36,7 @@ func assembleChildren(parent *res.DocItem, treeMap map[string][]*res.DocItem) {
 }
 
 func sortListByPreNodeId(list []*res.DocItem) []*res.DocItem {
+
 	sortedArray := make([]*res.DocItem, 0)
 	idMap := make(map[string]*res.DocItem)
 

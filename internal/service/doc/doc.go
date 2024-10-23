@@ -8,11 +8,11 @@ import (
 )
 
 type DocService interface {
-	CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) (*res.DocItem, error)
+	GetDocService(ctx fiber.Ctx, docId string) (*res.DocItem, error)
+	CreateDocService(ctx fiber.Ctx, userId string, req *req.CreateDocReq) (string, error)
 	UpdateDocService(ctx fiber.Ctx, userId string, req *req.UpdateDocReq) error
 	DeleteDocService(ctx fiber.Ctx, userId, docId string) error
 	GetDocListService(ctx fiber.Ctx, projectId string) ([]*res.DocItem, error)
-	GetDocListByParentIdService(ctx fiber.Ctx, parentId string) ([]*res.DocItem, error)
 }
 
 type docService struct {

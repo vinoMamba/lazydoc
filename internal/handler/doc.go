@@ -7,11 +7,11 @@ import (
 )
 
 type DocHandler interface {
+	GetDoc(c fiber.Ctx) error
 	CreateDoc(c fiber.Ctx) error
 	UpdateDoc(c fiber.Ctx) error
 	DeleteDoc(c fiber.Ctx) error
 	GetDocList(c fiber.Ctx) error
-	GetDocListByParentId(c fiber.Ctx) error
 }
 
 type docHandler struct {
@@ -22,6 +22,18 @@ func NewDocHandler(docService doc.DocService) DocHandler {
 	return &docHandler{
 		docService: docService,
 	}
+}
+
+func (h *docHandler) GetDoc(c fiber.Ctx) error {
+	docId := c.Params("docId")
+
+	docItem, err := h.docService.GetDocService(c, docId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(docItem)
 }
 
 func (h *docHandler) CreateDoc(c fiber.Ctx) error {
@@ -92,18 +104,5 @@ func (h *docHandler) GetDocList(c fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-
-	return c.Status(fiber.StatusOK).JSON(result)
-}
-
-func (h *docHandler) GetDocListByParentId(c fiber.Ctx) error {
-	parentId := c.Query("parentId")
-	result, err := h.docService.GetDocListByParentIdService(c, parentId)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
 	return c.Status(fiber.StatusOK).JSON(result)
 }
