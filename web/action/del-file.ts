@@ -4,11 +4,16 @@ import { resErr, resOk } from "@/lib/response"
 import { revalidateTag } from "next/cache"
 import { cookies } from "next/headers"
 
+type Params = {
+  docId: string
+  preDocId: string
+  nextSiblingId: string
+}
 
-export const delFileAction = async (docId: string) => {
+export const delFileAction = async ({ docId, preDocId, nextSiblingId }: Params) => {
   try {
     const token = cookies().get('token')?.value
-    const result = await fetch(`${process.env.NEXT_API_URL}/doc/${docId}`, {
+    const result = await fetch(`${process.env.NEXT_API_URL}/doc/${docId}?preDocId=${preDocId}&nextSiblingId=${nextSiblingId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

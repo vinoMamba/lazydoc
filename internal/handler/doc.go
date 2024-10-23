@@ -26,8 +26,9 @@ func NewDocHandler(docService doc.DocService) DocHandler {
 
 func (h *docHandler) GetDoc(c fiber.Ctx) error {
 	docId := c.Query("docId")
+	projectId := c.Query("projectId")
 
-	docItem, err := h.docService.GetDocService(c, docId)
+	docItem, err := h.docService.GetDocService(c, projectId, docId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -84,8 +85,10 @@ func (h *docHandler) DeleteDoc(c fiber.Ctx) error {
 
 	userId := GetUserIdFromLocals(c)
 	docId := c.Params("docId")
+	preDocId := c.Query("preDocId")
+	nextSiblingId := c.Query("nextSiblingId")
 
-	if err := h.docService.DeleteDocService(c, userId, docId); err != nil {
+	if err := h.docService.DeleteDocService(c, userId, docId, preDocId, nextSiblingId); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})

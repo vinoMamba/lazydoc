@@ -15,6 +15,7 @@ const deleteDoc = `-- name: DeleteDoc :exec
 UPDATE documents 
 SET
   is_deleted = $1, 
+  pre_doc_id = '',
   updated_at = $2,
   updated_by = $3
 WHERE id = $4
@@ -33,6 +34,33 @@ func (q *Queries) DeleteDoc(ctx context.Context, arg DeleteDocParams) error {
 		arg.UpdatedAt,
 		arg.UpdatedBy,
 		arg.ID,
+	)
+	return err
+}
+
+const deleteDocByProjectId = `-- name: DeleteDocByProjectId :exec
+UPDATE documents 
+SET
+  is_deleted = $1, 
+  pre_doc_id = '',
+  updated_at = $2,
+  updated_by = $3
+WHERE project_id = $4
+`
+
+type DeleteDocByProjectIdParams struct {
+	IsDeleted pgtype.Bool
+	UpdatedAt pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	ProjectID pgtype.Text
+}
+
+func (q *Queries) DeleteDocByProjectId(ctx context.Context, arg DeleteDocByProjectIdParams) error {
+	_, err := q.db.Exec(ctx, deleteDocByProjectId,
+		arg.IsDeleted,
+		arg.UpdatedAt,
+		arg.UpdatedBy,
+		arg.ProjectID,
 	)
 	return err
 }

@@ -48,7 +48,7 @@ export const FileItemDorpDown = ({ node, projectId }: Props) => {
 
             </>
           )}
-          <DeleteFileButton fileId={node.data.id}>
+          <DeleteFileButton fileId={node.data.id} node={node}>
             <DropdownMenuItem className="flex items-center gap-2">
               <Trash2 className="w-[1rem] h-[1rem]" />
               Delete

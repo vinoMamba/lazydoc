@@ -10,10 +10,15 @@ import (
 	"github.com/vinoMamba/lazydoc/api/res"
 )
 
-func (s *docService) GetDocService(ctx fiber.Ctx, docId string) (*res.DocItem, error) {
+func (s *docService) GetDocService(ctx fiber.Ctx, projectId, docId string) (*res.DocItem, error) {
 	item, err := s.Queries.GetDocById(ctx.Context(), docId)
 	if err != nil {
 		log.Errorf("[database] get doc error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+
+	if item.ProjectID.String != projectId {
+		log.Errorf("current project is not equal", err)
 		return nil, errors.New("internal server error")
 	}
 
