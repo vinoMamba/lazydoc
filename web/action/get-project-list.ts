@@ -17,6 +17,7 @@ export const getProjectListAction = async ({ name = '' }: SearchParams) => {
         "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`
       },
+      cache: 'no-cache',
       next: {
         tags: ['getProjectList']
       }

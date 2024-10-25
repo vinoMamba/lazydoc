@@ -38,7 +38,7 @@ func (q *Queries) DeleteProject(ctx context.Context, arg DeleteProjectParams) er
 }
 
 const getProjectById = `-- name: GetProjectById :one
-SELECT id, name, description, is_deleted, is_public, created_by, created_at, updated_by, updated_at FROM projects WHERE id = $1 AND is_deleted = false
+SELECT id, name, description, is_deleted, is_public, created_by, created_at, updated_by, updated_at FROM projects WHERE id = $1
 `
 
 func (q *Queries) GetProjectById(ctx context.Context, id string) (Project, error) {

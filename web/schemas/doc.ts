@@ -6,8 +6,6 @@ export const BasicDocItemSchema = z.object({
   preDocId: z.string().optional(),
   name: z.string(),
   isFolder: z.boolean(),
-  isPin: z.boolean(),
-  hasChildren: z.boolean(),
   createdBy: z.string().optional(),
   createdAt: z.string().optional(),
 })

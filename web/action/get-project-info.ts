@@ -19,7 +19,8 @@ export const getProjectInfoAction = async (projectId: string) => {
       },
       next: {
         tags: ['getProjectInfo']
-      }
+      },
+      cache: 'no-cache'
     })
 
     const json = await result.json();

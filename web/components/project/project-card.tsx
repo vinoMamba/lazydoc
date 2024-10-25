@@ -13,14 +13,14 @@ type Props = {
 
 export const ProjectCard = ({ project, showActionButton = true }: Props) => {
   return (
-    <div key={project.id} className="dark:bg-[#2c2c2c] dark:hover:bg-[#303030] bg-[#fafafa] hover:bg-[#f2f2f2] p-4  rounded-xl bg-card text-card-foreground shadow h-[160px] relative group flex flex-col ease-in duration-100">
-      <header>
+    <div key={project.id} className="dark:bg-[#2c2c2c] dark:hover:bg-[#303030] bg-[#fafafa] hover:bg-[#f2f2f2] p-4  rounded-xl bg-card text-card-foreground shadow h-[160px] relative group flex flex-col ease-in duration-100 border">
+      <header className="flex flex-col gap-2">
         <h6 className="sm:text-xl md:text-2xl font-semibold text-card-foreground opacity-70 group-hover:opacity-100">{project.name}</h6>
         <span className=" text-muted-foreground text-sm">{project.createdAt}</span>
       </header>
-      <p className=" text-muted-foreground text-sm italic line-clamp-3">{project.description}</p>
+      <p className=" text-muted-foreground text-sm italic line-clamp-3 mt-2">{project.description}</p>
       <div className="group-hover:flex hidden absolute bottom-2 right-2  items-center gap-2 px-4 opacity-0 group-hover:opacity-50 bg-card rounded-md ease-in duration-300">
-        <Link href={`/workbench/${project.id}`}>
+        <Link href={`/workbench/${project.id}`} prefetch={false}>
           <Button size="sm" variant="link" className="flex items-center gap-1 mx-0 px-0">
             <TvMinimal className=" w-[1rem] h-[1rem]" />
           </Button>

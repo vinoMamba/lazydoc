@@ -24,7 +24,7 @@ SET
 WHERE id = $4;
 
 -- name: GetProjectById :one
-SELECT * FROM projects WHERE id = $1 AND is_deleted = false;
+SELECT * FROM projects WHERE id = $1;
 
 -- name: GetProjectList :many
 (SELECT * FROM projects as pa WHERE pa.is_deleted = false AND pa.is_public = true AND pa.name LIKE $1)

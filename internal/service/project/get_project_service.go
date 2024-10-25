@@ -43,13 +43,15 @@ func (s *projectService) GetProjectListService(ctx fiber.Ctx, userId, projectNam
 func (s *projectService) GetProjectInfoService(ctx fiber.Ctx, projectId string) (*res.ProjectRes, error) {
 	p, err := s.Queries.GetProjectById(ctx.Context(), projectId)
 	if err != nil {
-		log.Errorf("[database] delete project error: %v", err)
+		log.Errorf("[database] get project info error: %v", err)
 		return nil, errors.New("internal server error")
 	}
+
 	return &res.ProjectRes{
 		Id:          p.ID,
 		Name:        p.Name,
 		IsPublic:    p.IsPublic.Bool,
+		IsDeleted:   p.IsDeleted.Bool,
 		Description: p.Description.String,
 		CreatedAt:   p.CreatedAt.Time.Format(time.DateTime),
 		CreatedBy:   p.CreatedBy.String,
