@@ -12,7 +12,7 @@ type Params = {
 
 export const delFileAction = async ({ docId, preDocId, nextSiblingId }: Params) => {
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/doc/${docId}?preDocId=${preDocId}&nextSiblingId=${nextSiblingId}`, {
       method: "DELETE",
       headers: {

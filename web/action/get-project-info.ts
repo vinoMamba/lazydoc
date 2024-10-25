@@ -10,7 +10,7 @@ export type SearchParams = {
 
 export const getProjectInfoAction = async (projectId: string) => {
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/project/${projectId}`, {
       method: "GET",
       headers: {
@@ -20,7 +20,6 @@ export const getProjectInfoAction = async (projectId: string) => {
       next: {
         tags: ['getProjectInfo']
       },
-      cache: 'no-cache'
     })
 
     const json = await result.json();

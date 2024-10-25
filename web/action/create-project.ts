@@ -19,7 +19,7 @@ export const createProjectAction = async (value: z.infer<typeof CreateProjectSch
   }
 
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(process.env.NEXT_API_URL + "/project", {
       method: "POST",
       headers: {

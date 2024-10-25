@@ -5,7 +5,8 @@ import { EmptyList } from "@/components/project/empty-list";
 import { ProjectCard } from "@/components/project/project-card";
 import { SearchInput } from "@/components/project/search-project-input";
 
-export default async function WorkbenchPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function WorkbenchPage(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams;
   const list = await getProjectListAction(searchParams)
   const userInfo = await getUserInfoAction()
   return (

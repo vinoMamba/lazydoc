@@ -5,7 +5,8 @@ import { UserTable } from "@/components/user-table"
 import { SearchInput } from "@/components/user-table/search-input"
 import { redirect } from "next/navigation"
 
-export default function ManagementPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function ManagementPage(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams;
 
   if (!searchParams.pageNum) {
     redirect("/management?pageNum=1")

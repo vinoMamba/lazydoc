@@ -11,7 +11,7 @@ export type SearchParams = {
 
 export const getUserListAction = async ({ pageNum, condition = '' }: SearchParams) => {
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/user/list?pageSize=10&pageNum=${pageNum}&condition=${condition}`, {
       method: "GET",
       headers: {

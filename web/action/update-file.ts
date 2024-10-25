@@ -9,7 +9,7 @@ import { z } from "zod"
 export const updateFileAction = async (value: z.infer<typeof UpdateFileSchema>) => {
   const validateValue = UpdateFileSchema.safeParse(value)
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(process.env.NEXT_API_URL + "/doc", {
       method: "PUT",
       headers: {

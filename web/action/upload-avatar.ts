@@ -6,7 +6,7 @@ import { cookies } from "next/headers"
 
 export async function updateAvatarAction(formData: FormData) {
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/user/avatar`, {
       method: 'POST',
       headers: {

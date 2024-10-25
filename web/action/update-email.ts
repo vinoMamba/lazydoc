@@ -13,7 +13,7 @@ export const updateUserEmailAction = async (value: z.infer<typeof UpdateEmailSch
     return resErr("Please enter a valid data.")
   }
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(process.env.NEXT_API_URL + "/user/email", {
       method: "Put",
       headers: {

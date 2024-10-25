@@ -21,7 +21,7 @@ export const loginAction = async (value: z.infer<typeof LoginSchema>) => {
     })
     const json = await result.json();
     if (result.status === 200) {
-      cookies().set("token", json.token, { maxAge: 60 * 60 * 24 * 3 })
+      (await cookies()).set("token", json.token, { maxAge: 60 * 60 * 24 * 3 })
       return resOk("login successful")
     } else {
       return resErr(json.message)

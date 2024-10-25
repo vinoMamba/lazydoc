@@ -7,7 +7,7 @@ import { cookies } from "next/headers"
 
 export const getDocInfo = async ({ docId = '', projectId = '' }: { docId: string, projectId: string }) => {
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/doc?docId=${docId}&projectId=${projectId}`, {
       method: "GET",
       headers: {

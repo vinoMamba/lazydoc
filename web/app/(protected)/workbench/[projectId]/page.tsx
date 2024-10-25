@@ -12,10 +12,8 @@ import {
 import { CircleAlert } from "lucide-react"
 import Link from "next/link"
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
-export default async function ProjectPage({ params }: { params: { projectId: string } }) {
+export default async function ProjectPage(props: { params: Promise<{ projectId: string }> }) {
+  const params = await props.params;
   const projectInfo = await getProjectInfoAction(params.projectId)
   if (!projectInfo) {
     redirect("/workbench")

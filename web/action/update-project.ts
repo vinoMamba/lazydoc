@@ -17,7 +17,7 @@ export const updateProjectAction = async (value: z.infer<typeof UpdateProjectSch
     isPublic: validateValue.data.isPublic === "public" ? true : false
   }
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(process.env.NEXT_API_URL + "/project", {
       method: "PUT",
       headers: {

@@ -6,7 +6,7 @@ import { cookies } from "next/headers"
 
 export const getUserInfoAction = async () => {
   try {
-    const token = cookies().get('token')?.value
+    const token = (await cookies()).get('token')?.value
     const result = await fetch(process.env.NEXT_API_URL + "/user/info", {
       method: "GET",
       headers: {
