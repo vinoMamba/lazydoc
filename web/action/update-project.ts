@@ -12,6 +12,10 @@ export const updateProjectAction = async (value: z.infer<typeof UpdateProjectSch
   if (!validateValue.success) {
     return resErr("Please enter a valid data.")
   }
+  const body = {
+    ...validateValue.data,
+    isPublic: validateValue.data.isPublic === "public" ? true : false
+  }
   try {
     const token = cookies().get('token')?.value
     const result = await fetch(process.env.NEXT_API_URL + "/project", {
@@ -20,7 +24,7 @@ export const updateProjectAction = async (value: z.infer<typeof UpdateProjectSch
         "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify(validateValue.data),
+      body: JSON.stringify(body),
     })
     const json = await result.json();
     if (result.status === 200) {

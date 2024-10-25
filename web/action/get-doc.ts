@@ -20,7 +20,6 @@ export const getDocInfo = async ({ docId = '', projectId = '' }: { docId: string
     })
 
     const json = await result.json();
-    console.log(json)
     const docItem = DocItemSchema.safeParse(json)
     if (docItem.success) {
       return docItem.data

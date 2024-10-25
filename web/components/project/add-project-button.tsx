@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export const AddProjectButton = () => {
   const [open, setOpen] = useState(false)
@@ -21,6 +22,7 @@ export const AddProjectButton = () => {
     resolver: zodResolver(CreateProjectSchema),
     defaultValues: {
       name: '',
+      isPublic: 'public',
       description: ''
     },
   })
@@ -71,11 +73,32 @@ export const AddProjectButton = () => {
                 />
                 <FormField
                   control={form.control}
+                  name="isPublic"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select project visibility" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="public">Public</SelectItem>
+                          <SelectItem value="private">Private</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Textarea
+                          maxLength={100}
                           placeholder="description"
                           className="resize-none"
                           {...field}

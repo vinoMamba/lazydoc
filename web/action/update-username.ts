@@ -21,7 +21,6 @@ export const updateUsernameAction = async (username: string) => {
       revalidateTag("getUserInfo")
       return resOk("update username successful")
     } else {
-      console.log(json)
       return resErr(json.error)
     }
   } catch (error) {

@@ -16,7 +16,6 @@ export const FileItem = ({ node }: Props) => {
   const handleIconClick = (e: MouseEvent<SVGSVGElement>) => {
     e.stopPropagation()
     node.toggle()
-    console.log(node.nextSibling)
   }
   return (
     <div

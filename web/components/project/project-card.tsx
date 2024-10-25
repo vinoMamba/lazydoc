@@ -8,9 +8,10 @@ import Link from "next/link"
 
 type Props = {
   project: z.infer<typeof ProjectSchema>
+  showActionButton?: boolean
 }
 
-export const ProjectCard = ({ project }: Props) => {
+export const ProjectCard = ({ project, showActionButton = true }: Props) => {
   return (
     <div key={project.id} className="dark:bg-[#2c2c2c] dark:hover:bg-[#303030] bg-[#fafafa] hover:bg-[#f2f2f2] p-4  rounded-xl bg-card text-card-foreground shadow h-[160px] relative group flex flex-col ease-in duration-100">
       <header>
@@ -24,8 +25,12 @@ export const ProjectCard = ({ project }: Props) => {
             <TvMinimal className=" w-[1rem] h-[1rem]" />
           </Button>
         </Link>
-        <EditProjectButton project={project} />
-        <DelProjectButton projectId={project.id} />
+        {showActionButton && (
+          <>
+            <EditProjectButton project={project} />
+            <DelProjectButton projectId={project.id} />
+          </>
+        )}
       </div>
     </div>
   )

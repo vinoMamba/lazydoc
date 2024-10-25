@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { updateProjectAction } from "@/action/update-project"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type Props = {
   project: z.infer<typeof ProjectSchema>
@@ -25,6 +26,7 @@ export const EditProjectButton = ({ project }: Props) => {
     resolver: zodResolver(UpdateProjectSchema),
     defaultValues: {
       id: project.id,
+      isPublic: project.isPublic ? "public" : "private",
       name: project.name,
       description: project.description
     },
@@ -75,11 +77,32 @@ export const EditProjectButton = ({ project }: Props) => {
                 />
                 <FormField
                   control={form.control}
+                  name="isPublic"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select project visibility" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="public">Public</SelectItem>
+                          <SelectItem value="private">Private</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Textarea
+                          maxLength={100}
                           placeholder="description"
                           className="resize-none"
                           {...field}
