@@ -30,16 +30,6 @@ func (s *projectService) DeleteProjectService(ctx fiber.Ctx, userId, projectId s
 		return errors.New("internal server error")
 	}
 
-	if err := qtx.DeleteProjectUserByProjectId(ctx.Context(), repository.DeleteProjectUserByProjectIdParams{
-		IsDeleted: pgtype.Bool{Bool: true, Valid: true},
-		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
-		UpdatedBy: pgtype.Text{String: userId, Valid: true},
-		ProjectID: projectId,
-	}); err != nil {
-		log.Errorf("[database] delete project user error: %v", err)
-		return errors.New("internal server error")
-	}
-
 	if err := qtx.DeleteDocByProjectId(ctx.Context(), repository.DeleteDocByProjectIdParams{
 		IsDeleted: pgtype.Bool{Bool: true, Valid: true},
 		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},

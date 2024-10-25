@@ -8,7 +8,10 @@ CREATE TABLE users (
   is_super BOOLEAN DEFAULT FALSE,
   is_deleted BOOLEAN DEFAULT FALSE,
   deleted_at TIMESTAMP DEFAULT NULL,
+  deleted_by VARCHAR(64) DEFAULT NULL,
+  created_by VARCHAR(64) DEFAULT NULL,
   created_at TIMESTAMP DEFAULT NULL,
+  updated_by VARCHAR(64) DEFAULT NULL,
   updated_at TIMESTAMP DEFAULT NULL
 );
 

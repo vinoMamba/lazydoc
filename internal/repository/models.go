@@ -5,69 +5,21 @@
 package repository
 
 import (
-	"database/sql/driver"
-	"fmt"
-
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type PermissionLevel string
-
-const (
-	PermissionLevelAdmin  PermissionLevel = "admin"
-	PermissionLevelEditor PermissionLevel = "editor"
-	PermissionLevelReader PermissionLevel = "reader"
-)
-
-func (e *PermissionLevel) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = PermissionLevel(s)
-	case string:
-		*e = PermissionLevel(s)
-	default:
-		return fmt.Errorf("unsupported scan type for PermissionLevel: %T", src)
-	}
-	return nil
-}
-
-type NullPermissionLevel struct {
-	PermissionLevel PermissionLevel
-	Valid           bool // Valid is true if PermissionLevel is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullPermissionLevel) Scan(value interface{}) error {
-	if value == nil {
-		ns.PermissionLevel, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.PermissionLevel.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullPermissionLevel) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.PermissionLevel), nil
-}
-
 type Document struct {
-	ID          string
-	ParentID    pgtype.Text
-	ProjectID   pgtype.Text
-	Name        string
-	IsFolder    pgtype.Bool
-	IsDeleted   pgtype.Bool
-	CreatedBy   pgtype.Text
-	CreatedAt   pgtype.Timestamp
-	UpdatedBy   pgtype.Text
-	UpdatedAt   pgtype.Timestamp
-	IsPin       pgtype.Bool
-	PreDocID    pgtype.Text
-	HasChildren pgtype.Bool
+	ID        string
+	ParentID  pgtype.Text
+	ProjectID pgtype.Text
+	PreDocID  pgtype.Text
+	Name      string
+	IsFolder  pgtype.Bool
+	IsDeleted pgtype.Bool
+	CreatedBy pgtype.Text
+	CreatedAt pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
 }
 
 type Project struct {
@@ -75,22 +27,11 @@ type Project struct {
 	Name        string
 	Description pgtype.Text
 	IsDeleted   pgtype.Bool
+	IsPublic    pgtype.Bool
 	CreatedBy   pgtype.Text
 	CreatedAt   pgtype.Timestamp
 	UpdatedBy   pgtype.Text
 	UpdatedAt   pgtype.Timestamp
-}
-
-type ProjectUser struct {
-	ID         string
-	UserID     string
-	ProjectID  string
-	Permission NullPermissionLevel
-	IsDeleted  pgtype.Bool
-	CreatedBy  pgtype.Text
-	CreatedAt  pgtype.Timestamp
-	UpdatedBy  pgtype.Text
-	UpdatedAt  pgtype.Timestamp
 }
 
 type User struct {
@@ -102,9 +43,9 @@ type User struct {
 	IsSuper   pgtype.Bool
 	IsDeleted pgtype.Bool
 	DeletedAt pgtype.Timestamp
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	CreatedBy pgtype.Text
-	UpdatedBy pgtype.Text
 	DeletedBy pgtype.Text
+	CreatedBy pgtype.Text
+	CreatedAt pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
 }

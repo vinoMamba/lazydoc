@@ -21,7 +21,7 @@ func (q *Queries) DeleteUserById(ctx context.Context, id string) error {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by FROM users 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, deleted_by, created_by, created_at, updated_by, updated_at FROM users 
 WHERE email = $1  LIMIT 1
 `
 
@@ -37,17 +37,17 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.IsSuper,
 		&i.IsDeleted,
 		&i.DeletedAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.CreatedBy,
-		&i.UpdatedBy,
 		&i.DeletedBy,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedBy,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by FROM users 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, deleted_by, created_by, created_at, updated_by, updated_at FROM users 
 WHERE id = $1 LIMIT 1
 `
 
@@ -63,17 +63,17 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.IsSuper,
 		&i.IsDeleted,
 		&i.DeletedAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.CreatedBy,
-		&i.UpdatedBy,
 		&i.DeletedBy,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedBy,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const getUserList = `-- name: GetUserList :many
-SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, created_at, updated_at, created_by, updated_by, deleted_by 
+SELECT id, username, email, avatar, password, is_super, is_deleted, deleted_at, deleted_by, created_by, created_at, updated_by, updated_at 
 FROM users 
 WHERE (username LIKE $1 OR email LIKE $2) AND is_super = false
 ORDER BY created_at DESC
@@ -110,11 +110,11 @@ func (q *Queries) GetUserList(ctx context.Context, arg GetUserListParams) ([]Use
 			&i.IsSuper,
 			&i.IsDeleted,
 			&i.DeletedAt,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.CreatedBy,
-			&i.UpdatedBy,
 			&i.DeletedBy,
+			&i.CreatedBy,
+			&i.CreatedAt,
+			&i.UpdatedBy,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

@@ -16,7 +16,7 @@ func (s *projectService) UpdateProjectService(ctx fiber.Ctx, userId string, req 
 	_, err := s.Queries.GetProjectById(ctx.Context(), req.Id)
 	if err != nil {
 		log.Errorf("[database] select project error: %v", err)
-		return errors.New("Current project is not exist")
+		return errors.New("current project is not exist")
 	}
 
 	if err := s.Queries.UpdateProject(ctx.Context(), repository.UpdateProjectParams{
@@ -24,6 +24,7 @@ func (s *projectService) UpdateProjectService(ctx fiber.Ctx, userId string, req 
 		Name:        req.Name,
 		Description: pgtype.Text{String: req.Description, Valid: true},
 		UpdatedAt:   pgtype.Timestamp{Time: time.Now(), Valid: true},
+		IsPublic:    pgtype.Bool{Bool: req.IsPublic, Valid: true},
 		UpdatedBy:   pgtype.Text{String: userId, Valid: true},
 	}); err != nil {
 		log.Errorf("[database] update project error: %v", err)

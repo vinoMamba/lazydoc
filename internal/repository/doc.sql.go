@@ -66,7 +66,7 @@ func (q *Queries) DeleteDocByProjectId(ctx context.Context, arg DeleteDocByProje
 }
 
 const getDocById = `-- name: GetDocById :one
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE id = $1 AND is_deleted = false
+SELECT id, parent_id, project_id, pre_doc_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at FROM documents WHERE id = $1 AND is_deleted = false
 `
 
 func (q *Queries) GetDocById(ctx context.Context, id string) (Document, error) {
@@ -76,6 +76,7 @@ func (q *Queries) GetDocById(ctx context.Context, id string) (Document, error) {
 		&i.ID,
 		&i.ParentID,
 		&i.ProjectID,
+		&i.PreDocID,
 		&i.Name,
 		&i.IsFolder,
 		&i.IsDeleted,
@@ -83,15 +84,12 @@ func (q *Queries) GetDocById(ctx context.Context, id string) (Document, error) {
 		&i.CreatedAt,
 		&i.UpdatedBy,
 		&i.UpdatedAt,
-		&i.IsPin,
-		&i.PreDocID,
-		&i.HasChildren,
 	)
 	return i, err
 }
 
 const getDocByPreDocId = `-- name: GetDocByPreDocId :one
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE pre_doc_id = $1 AND is_deleted = false
+SELECT id, parent_id, project_id, pre_doc_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at FROM documents WHERE pre_doc_id = $1 AND is_deleted = false
 `
 
 func (q *Queries) GetDocByPreDocId(ctx context.Context, preDocID pgtype.Text) (Document, error) {
@@ -101,6 +99,7 @@ func (q *Queries) GetDocByPreDocId(ctx context.Context, preDocID pgtype.Text) (D
 		&i.ID,
 		&i.ParentID,
 		&i.ProjectID,
+		&i.PreDocID,
 		&i.Name,
 		&i.IsFolder,
 		&i.IsDeleted,
@@ -108,15 +107,12 @@ func (q *Queries) GetDocByPreDocId(ctx context.Context, preDocID pgtype.Text) (D
 		&i.CreatedAt,
 		&i.UpdatedBy,
 		&i.UpdatedAt,
-		&i.IsPin,
-		&i.PreDocID,
-		&i.HasChildren,
 	)
 	return i, err
 }
 
 const getDocListByParentId = `-- name: GetDocListByParentId :many
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE parent_id = $1 AND is_deleted = false
+SELECT id, parent_id, project_id, pre_doc_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at FROM documents WHERE parent_id = $1 AND is_deleted = false
 `
 
 func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text) ([]Document, error) {
@@ -132,6 +128,7 @@ func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text
 			&i.ID,
 			&i.ParentID,
 			&i.ProjectID,
+			&i.PreDocID,
 			&i.Name,
 			&i.IsFolder,
 			&i.IsDeleted,
@@ -139,9 +136,6 @@ func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text
 			&i.CreatedAt,
 			&i.UpdatedBy,
 			&i.UpdatedAt,
-			&i.IsPin,
-			&i.PreDocID,
-			&i.HasChildren,
 		); err != nil {
 			return nil, err
 		}
@@ -154,7 +148,7 @@ func (q *Queries) GetDocListByParentId(ctx context.Context, parentID pgtype.Text
 }
 
 const getDocListByProjectId = `-- name: GetDocListByProjectId :many
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE project_id = $1 AND is_deleted = false
+SELECT id, parent_id, project_id, pre_doc_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at FROM documents WHERE project_id = $1 AND is_deleted = false
 `
 
 func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Text) ([]Document, error) {
@@ -170,6 +164,7 @@ func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Te
 			&i.ID,
 			&i.ParentID,
 			&i.ProjectID,
+			&i.PreDocID,
 			&i.Name,
 			&i.IsFolder,
 			&i.IsDeleted,
@@ -177,9 +172,6 @@ func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Te
 			&i.CreatedAt,
 			&i.UpdatedBy,
 			&i.UpdatedAt,
-			&i.IsPin,
-			&i.PreDocID,
-			&i.HasChildren,
 		); err != nil {
 			return nil, err
 		}
@@ -192,7 +184,7 @@ func (q *Queries) GetDocListByProjectId(ctx context.Context, projectID pgtype.Te
 }
 
 const getFirstDocByParentId = `-- name: GetFirstDocByParentId :one
-SELECT id, parent_id, project_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at, is_pin, pre_doc_id, has_children FROM documents WHERE parent_id = $1 AND (pre_doc_id IS NULL OR pre_doc_id = '' ) AND is_deleted = false
+SELECT id, parent_id, project_id, pre_doc_id, name, is_folder, is_deleted, created_by, created_at, updated_by, updated_at FROM documents WHERE parent_id = $1 AND (pre_doc_id IS NULL OR pre_doc_id = '' ) AND is_deleted = false
 `
 
 func (q *Queries) GetFirstDocByParentId(ctx context.Context, parentID pgtype.Text) (Document, error) {
@@ -202,6 +194,7 @@ func (q *Queries) GetFirstDocByParentId(ctx context.Context, parentID pgtype.Tex
 		&i.ID,
 		&i.ParentID,
 		&i.ProjectID,
+		&i.PreDocID,
 		&i.Name,
 		&i.IsFolder,
 		&i.IsDeleted,
@@ -209,9 +202,6 @@ func (q *Queries) GetFirstDocByParentId(ctx context.Context, parentID pgtype.Tex
 		&i.CreatedAt,
 		&i.UpdatedBy,
 		&i.UpdatedAt,
-		&i.IsPin,
-		&i.PreDocID,
-		&i.HasChildren,
 	)
 	return i, err
 }

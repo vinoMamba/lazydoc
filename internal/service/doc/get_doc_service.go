@@ -23,16 +23,14 @@ func (s *docService) GetDocService(ctx fiber.Ctx, projectId, docId string) (*res
 	}
 
 	return &res.DocItem{
-		Id:          item.ID,
-		Name:        item.Name,
-		PreDocId:    item.PreDocID.String,
-		ParentId:    item.ParentID.String,
-		IsFolder:    item.IsFolder.Bool,
-		IsPin:       item.IsPin.Bool,
-		HasChildren: item.HasChildren.Bool,
-		Children:    []*res.DocItem{},
-		CreatedAt:   item.CreatedAt.Time.Format(time.DateOnly),
-		CreatedBy:   item.CreatedBy.String,
+		Id:        item.ID,
+		Name:      item.Name,
+		PreDocId:  item.PreDocID.String,
+		ParentId:  item.ParentID.String,
+		IsFolder:  item.IsFolder.Bool,
+		Children:  []*res.DocItem{},
+		CreatedAt: item.CreatedAt.Time.Format(time.DateOnly),
+		CreatedBy: item.CreatedBy.String,
 	}, nil
 }
 
@@ -46,16 +44,14 @@ func (s *docService) GetDocListService(ctx fiber.Ctx, projectId string) ([]*res.
 
 	for _, item := range list {
 		itemList = append(itemList, &res.DocItem{
-			Id:          item.ID,
-			Name:        item.Name,
-			PreDocId:    item.PreDocID.String,
-			ParentId:    item.ParentID.String,
-			IsFolder:    item.IsFolder.Bool,
-			IsPin:       item.IsPin.Bool,
-			HasChildren: item.HasChildren.Bool,
-			Children:    []*res.DocItem{},
-			CreatedAt:   item.CreatedAt.Time.Format(time.DateOnly),
-			CreatedBy:   item.CreatedBy.String,
+			Id:        item.ID,
+			Name:      item.Name,
+			PreDocId:  item.PreDocID.String,
+			ParentId:  item.ParentID.String,
+			IsFolder:  item.IsFolder.Bool,
+			Children:  []*res.DocItem{},
+			CreatedAt: item.CreatedAt.Time.Format(time.DateOnly),
+			CreatedBy: item.CreatedBy.String,
 		})
 	}
 

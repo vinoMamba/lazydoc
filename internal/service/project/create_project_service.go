@@ -30,30 +30,12 @@ func (s *projectService) CreateProjectService(ctx fiber.Ctx, userId string, req 
 	if err := qtx.InsertProject(ctx.Context(), repository.InsertProjectParams{
 		ID:          projectId,
 		Name:        req.Name,
+		IsPublic:    pgtype.Bool{Bool: req.IsPublic, Valid: true},
 		Description: pgtype.Text{String: req.Description, Valid: true},
 		CreatedAt:   pgtype.Timestamp{Valid: true, Time: time.Now()},
 		CreatedBy:   pgtype.Text{String: userId, Valid: true},
 	}); err != nil {
 		log.Errorf("[database] insert project error: %v", err)
-		return errors.New("internal server error")
-	}
-
-	projectUserId, err := s.Sid.GenString()
-
-	if err != nil {
-		log.Errorf("Create project user id error: %v", err)
-		return errors.New("internal server error")
-	}
-
-	if err := s.Queries.InsertProjectUser(ctx.Context(), repository.InsertProjectUserParams{
-		ID:         projectUserId,
-		ProjectID:  projectId,
-		UserID:     userId,
-		Permission: repository.NullPermissionLevel{PermissionLevel: repository.PermissionLevelAdmin, Valid: true},
-		CreatedAt:  pgtype.Timestamp{Valid: true, Time: time.Now()},
-		CreatedBy:  pgtype.Text{String: userId, Valid: true},
-	}); err != nil {
-		log.Errorf("[database] insert project user error: %v", err)
 		return errors.New("internal server error")
 	}
 
